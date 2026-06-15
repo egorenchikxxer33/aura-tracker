@@ -783,11 +783,134 @@ canvas#particles {
   width: 0%;
 }
 
+/* ===== SECRET ===== */
+.secret-zone {
+  position: fixed;
+  top: 0; left: 0;
+  width: 120px;
+  height: 120px;
+  z-index: 200;
+  cursor: default;
+}
+
+.secret-btn {
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 201;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,0,170,0.05);
+  border: 1px solid rgba(255,0,170,0.1);
+  color: var(--pink);
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.3) rotate(-180deg);
+  transition: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Unbounded', sans-serif;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  overflow: hidden;
+}
+.secret-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent, var(--pink), transparent, var(--cyan), transparent);
+  animation: secretSpin 3s linear infinite;
+  opacity: 0;
+}
+@keyframes secretSpin { to { transform: rotate(360deg); } }
+.secret-btn .inner {
+  position: relative;
+  z-index: 1;
+  background: rgba(10,0,21,0.8);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+}
+.secret-btn.revealing {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+  border-color: rgba(255,0,170,0.4);
+  background: rgba(255,0,170,0.1);
+  box-shadow: 0 0 30px rgba(255,0,170,0.15);
+}
+.secret-btn.revealing::before { opacity: 0.6; }
+.secret-btn.revealing:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 50px rgba(255,0,170,0.3);
+  border-color: var(--pink);
+}
+
+.secret-flash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 300;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.05s ease;
+}
+.secret-flash.fire {
+  opacity: 0.95;
+  transition: opacity 0s;
+}
+
+.secret-image-wrap {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 299;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.secret-image-wrap.show {
+  opacity: 1;
+}
+.secret-image-wrap.fade-out {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.secret-image-wrap img {
+  max-width: 85vw;
+  max-height: 85vh;
+  border-radius: 24px;
+  box-shadow: 0 0 80px rgba(255,0,170,0.3), 0 0 160px rgba(0,240,255,0.15);
+  border: 2px solid rgba(255,255,255,0.1);
+}
 </style>
 </head>
 <body>
 
 <canvas id="particles"></canvas>
+
+<!-- ===== SECRET ===== -->
+<div class="secret-zone" id="secretZone"></div>
+<div class="secret-btn" id="secretBtn">
+  <span class="inner">???</span>
+</div>
+<div class="secret-flash" id="secretFlash"></div>
+<div class="secret-image-wrap" id="secretImageWrap">
+  <img src="secret.jpg" alt="secret" id="secretImage">
+</div>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen" class="screen">
@@ -1372,6 +1495,79 @@ function nextTrack() { loadTrack(currentTrack + 1); }
 function prevTrack() { loadTrack(currentTrack - 1); }
 
 initPlayer();
+
+// ===== SECRET EASTER EGG =====
+(function() {
+  const zone = document.getElementById('secretZone');
+  const btn = document.getElementById('secretBtn');
+  const flash = document.getElementById('secretFlash');
+  const imgWrap = document.getElementById('secretImageWrap');
+
+  let hoverStart = 0;
+  let revealTimer = null;
+  let isRevealed = false;
+  let alreadyTriggered = false;
+
+  zone.addEventListener('mouseenter', () => {
+    if (alreadyTriggered) return;
+    hoverStart = Date.now();
+    btn.classList.remove('revealing');
+    btn.style.opacity = '0';
+    btn.style.transform = 'scale(0.3) rotate(-180deg)';
+    isRevealed = false;
+
+    revealTimer = setInterval(() => {
+      const elapsed = Date.now() - hoverStart;
+      const progress = Math.min(elapsed / 10000, 1);
+
+      btn.style.opacity = progress * 0.7;
+      btn.style.transform = `scale(${0.3 + 0.7 * progress}) rotate(${-180 + 180 * progress}deg)`;
+
+      if (progress >= 1 && !isRevealed) {
+        isRevealed = true;
+        btn.style.opacity = '1';
+        btn.style.transform = 'scale(1) rotate(0deg)';
+        btn.classList.add('revealing');
+        clearInterval(revealTimer);
+      }
+    }, 50);
+  });
+
+  zone.addEventListener('mouseleave', () => {
+    if (!isRevealed) {
+      clearInterval(revealTimer);
+      btn.style.opacity = '0';
+      btn.style.transform = 'scale(0.3) rotate(-180deg)';
+      btn.classList.remove('revealing');
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    if (alreadyTriggered) return;
+    alreadyTriggered = true;
+    isRevealed = false;
+    btn.classList.remove('revealing');
+    btn.style.opacity = '0';
+    btn.style.transform = 'scale(0.3) rotate(-180deg)';
+    clearInterval(revealTimer);
+
+    // Flash
+    flash.classList.add('fire');
+    setTimeout(() => flash.classList.remove('fire'), 100);
+
+    // Show image
+    imgWrap.classList.add('show');
+
+    setTimeout(() => {
+      imgWrap.classList.add('fade-out');
+      setTimeout(() => {
+        imgWrap.classList.remove('show', 'fade-out');
+        // Reset after full cycle
+        setTimeout(() => { alreadyTriggered = false; }, 1000);
+      }, 2000);
+    }, 1500);
+  });
+})();
 </script>
 </body>
 </html>

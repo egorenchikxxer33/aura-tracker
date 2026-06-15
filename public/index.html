@@ -644,7 +644,145 @@ canvas#particles {
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
   50% { transform: translateY(-20px) scale(1.1); opacity: 0.6; }
 }
-</style>
+
+/* ===== MUSIC PLAYER ===== */
+.music-player {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 100;
+  padding: 14px 18px;
+  min-width: 260px;
+  max-width: 320px;
+  background: rgba(10,0,21,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+.music-player:hover { border-color: rgba(255,255,255,0.15); }
+
+.music-track-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.music-now-playing {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(240,230,255,0.3);
+}
+.music-track-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.music-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.music-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  line-height: 1;
+}
+.music-btn:hover {
+  background: rgba(0,240,255,0.12);
+  border-color: var(--cyan);
+  transform: translateY(-1px);
+}
+.music-btn:active { transform: scale(0.92); }
+.music-btn.play-btn {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--cyan), #0099cc);
+  border: none;
+  color: #000;
+  font-size: 18px;
+}
+.music-btn.play-btn:hover {
+  box-shadow: 0 4px 20px rgba(0,240,255,0.3);
+}
+
+.music-volume-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 4px;
+}
+.music-volume-icon {
+  font-size: 14px;
+  color: rgba(240,230,255,0.4);
+}
+.music-volume {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 70px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  cursor: pointer;
+}
+.music-volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(0,240,255,0.3);
+}
+.music-volume::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  border: none;
+}
+
+.music-progress {
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.music-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--pink));
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
 </head>
 <body>
 
@@ -725,6 +863,26 @@ canvas#particles {
 
 <!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
+
+<!-- ===== MUSIC PLAYER ===== -->
+<div class="music-player" id="musicPlayer">
+  <div class="music-track-info">
+    <div class="music-now-playing">СЕЙЧАС ИГРАЕТ</div>
+    <div class="music-track-name" id="trackName">Helena - I Just Can't Get You Out Of My Head</div>
+  </div>
+  <div class="music-progress" id="progressWrap">
+    <div class="music-progress-bar" id="progressBar"></div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn" onclick="prevTrack()" title="Предыдущий">⏮</button>
+    <button class="music-btn play-btn" id="playBtn" onclick="togglePlay()" title="Play/Pause">▶</button>
+    <button class="music-btn" onclick="nextTrack()" title="Следующий">⏭</button>
+    <div class="music-volume-wrap">
+      <span class="music-volume-icon">🔊</span>
+      <input type="range" class="music-volume" id="volumeSlider" min="0" max="100" value="70">
+    </div>
+  </div>
+</div>
 
 <!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modal">
@@ -1117,13 +1275,102 @@ function showToast(text, type = '') {
   toast.textContent = text;
   toast.className = 'toast ' + type;
   clearTimeout(toastTimeout);
-  // force reflow
   void toast.offsetWidth;
   toast.classList.add('show');
   toastTimeout = setTimeout(() => {
     toast.classList.remove('show');
   }, 2500);
 }
+
+// ===== MUSIC PLAYER =====
+const tracks = [
+  { file: 'audio/track1.mp3', name: 'Helena - I Just Can\'t Get You Out Of My Head' },
+  { file: 'audio/track2.mp3', name: 'Tito Torres - Deep Vibes' }
+];
+let currentTrack = 0;
+let audio = null;
+let isPlaying = false;
+
+function initPlayer() {
+  audio = new Audio(tracks[currentTrack].file);
+  audio.volume = 0.7;
+  document.getElementById('trackName').textContent = tracks[currentTrack].name;
+
+  audio.addEventListener('ended', () => nextTrack());
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+  });
+
+  document.getElementById('volumeSlider').addEventListener('input', function() {
+    if (audio) audio.volume = this.value / 100;
+  });
+
+  document.getElementById('progressWrap').addEventListener('click', function(e) {
+    if (audio && audio.duration) {
+      const rect = this.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
+    }
+  });
+
+  // Autoplay after first interaction
+  const startPlay = () => {
+    audio.play().then(() => {
+      isPlaying = true;
+      document.getElementById('playBtn').textContent = '⏸';
+    }).catch(() => {});
+    document.removeEventListener('click', startPlay);
+    document.removeEventListener('touchstart', startPlay);
+  };
+  document.addEventListener('click', startPlay);
+  document.addEventListener('touchstart', startPlay);
+}
+
+function togglePlay() {
+  if (!audio) return;
+  if (isPlaying) {
+    audio.pause();
+    document.getElementById('playBtn').textContent = '▶';
+  } else {
+    audio.play().catch(() => {});
+    document.getElementById('playBtn').textContent = '⏸';
+  }
+  isPlaying = !isPlaying;
+}
+
+function loadTrack(index) {
+  if (!audio) return;
+  const wasPlaying = isPlaying;
+  audio.pause();
+  currentTrack = (index + tracks.length) % tracks.length;
+  audio = new Audio(tracks[currentTrack].file);
+  audio.volume = document.getElementById('volumeSlider').value / 100;
+  document.getElementById('trackName').textContent = tracks[currentTrack].name;
+  document.getElementById('progressBar').style.width = '0%';
+
+  audio.addEventListener('ended', () => nextTrack());
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+  });
+
+  if (wasPlaying) {
+    audio.play().then(() => {
+      isPlaying = true;
+      document.getElementById('playBtn').textContent = '⏸';
+    }).catch(() => { isPlaying = false; });
+  }
+}
+
+function nextTrack() { loadTrack(currentTrack + 1); }
+function prevTrack() { loadTrack(currentTrack - 1); }
+
+initPlayer();
 </script>
 </body>
 </html>

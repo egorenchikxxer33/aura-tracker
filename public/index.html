@@ -783,131 +783,227 @@ canvas#particles {
   width: 0%;
 }
 
-/* ===== SECRET ===== */
+/* ===== SECRET OVERLAY ===== */
+.secret-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 250;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.secret-overlay.active {
+  opacity: 1;
+}
+
+/* ===== SECRET ZONE ===== */
 .secret-zone {
   position: fixed;
   top: 0; left: 0;
-  width: 160px;
-  height: 160px;
+  width: 180px;
+  height: 180px;
   z-index: 200;
   cursor: default;
 }
 
+/* ===== SECRET BUTTON ===== */
+@keyframes secretSpin { to { transform: rotate(360deg); } }
+@keyframes secretPulse {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 15px rgba(255,0,170,0.3)) drop-shadow(0 0 30px rgba(0,240,255,0.15)); }
+  50% { filter: brightness(1.4) drop-shadow(0 0 25px rgba(255,0,170,0.6)) drop-shadow(0 0 50px rgba(0,240,255,0.3)) drop-shadow(0 0 80px rgba(255,215,0,0.15)); }
+}
+@keyframes textFlicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.2; }
+  94% { opacity: 0.8; }
+  95% { opacity: 0.1; }
+  96% { opacity: 0.9; }
+}
+@keyframes ringExpand {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+@keyframes levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 .secret-btn {
   position: fixed;
-  top: 20px; left: 20px;
+  top: 24px; left: 24px;
   z-index: 201;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(255,0,170,0.03);
-  border: 1px solid rgba(255,0,170,0.06);
   cursor: pointer;
   opacity: 0;
-  transform: scale(0.1) rotate(-360deg);
+  transform: scale(0.05) rotate(-720deg);
   transition: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Unbounded', sans-serif;
-  backdrop-filter: blur(4px);
   pointer-events: none;
-  overflow: visible;
   outline: none;
+  width: 72px;
+  height: 72px;
 }
-.secret-btn::before {
-  content: '';
+
+.secret-ring {
   position: absolute;
-  top: -100%; left: -100%;
-  width: 300%; height: 300%;
-  background: conic-gradient(from 0deg, transparent, var(--pink), transparent, var(--cyan), transparent, var(--gold), transparent);
-  animation: secretSpin 2s linear infinite;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-.secret-btn::after {
-  content: '';
-  position: absolute;
-  top: -6px; left: -6px;
-  right: -6px; bottom: -6px;
   border-radius: 50%;
-  border: 2px solid transparent;
-  background: conic-gradient(from 0deg, transparent, var(--pink), transparent, var(--cyan), transparent) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  border: 1.5px solid;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: none;
 }
-@keyframes secretSpin { to { transform: rotate(360deg); } }
-@keyframes secretPulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(255,0,170,0.2), 0 0 40px rgba(0,240,255,0.1); }
-  50% { box-shadow: 0 0 40px rgba(255,0,170,0.4), 0 0 80px rgba(0,240,255,0.2), 0 0 120px rgba(255,215,0,0.1); }
+.ring-1 {
+  width: 72px; height: 72px;
+  border-color: rgba(255,0,170,0.3);
 }
-@keyframes secretGlow {
-  0%, 100% { filter: brightness(1) hue-rotate(0deg); }
-  33% { filter: brightness(1.3) hue-rotate(30deg); }
-  66% { filter: brightness(1.1) hue-rotate(-20deg); }
+.ring-2 {
+  width: 88px; height: 88px;
+  border-color: rgba(0,240,255,0.2);
+}
+.ring-3 {
+  width: 104px; height: 104px;
+  border-color: rgba(255,215,0,0.15);
 }
 
 .secret-btn .inner {
   position: relative;
   z-index: 2;
-  background: rgba(10,0,21,0.85);
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: var(--pink);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,0,170,0.15);
-  transition: all 0.4s ease;
-  letter-spacing: 2px;
+  background: rgba(10,0,21,0.7);
+  border: 1px solid rgba(255,0,170,0.2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.secret-btn .inner::before {
+  content: '';
+  position: absolute;
+  top: -100%; left: -100%;
+  width: 300%; height: 300%;
+  background: conic-gradient(from 0deg, transparent, rgba(255,0,170,0.2), transparent, rgba(0,240,255,0.2), transparent, rgba(255,215,0,0.2), transparent);
+  animation: secretSpin 3s linear infinite;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
+.inner-text {
+  position: relative;
+  z-index: 3;
+  font-size: 22px;
+  color: var(--pink);
+  text-shadow: 0 0 10px rgba(255,0,170,0.5);
+  letter-spacing: 3px;
+  animation: textFlicker 2s infinite;
+  transition: all 0.3s ease;
+}
+.inner-glow {
+  position: absolute;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,0,170,0.1), transparent 70%);
+  transition: all 0.3s ease;
+}
+
+/* Revealing state */
 .secret-btn.revealing {
   opacity: 1;
   transform: scale(1) rotate(0deg);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: auto;
-  background: rgba(255,0,170,0.08);
-  border-color: rgba(255,0,170,0.2);
-  animation: secretPulse 2s ease-in-out infinite, secretGlow 3s ease infinite;
+  animation: levitate 3s ease-in-out infinite;
 }
-.secret-btn.revealing::before { opacity: 0.8; }
-.secret-btn.revealing::after { opacity: 0.6; }
 .secret-btn.revealing .inner {
-  background: rgba(10,0,21,0.7);
-  border-color: rgba(255,0,170,0.3);
-  box-shadow: 0 0 30px rgba(255,0,170,0.15), inset 0 0 30px rgba(255,0,170,0.05);
+  border-color: rgba(255,0,170,0.4);
+  animation: secretPulse 2s ease-in-out infinite;
 }
-.secret-btn.revealing:hover {
-  transform: scale(1.2) rotate(10deg);
-  border-color: var(--pink);
-}
-.secret-btn.revealing:hover .inner {
-  background: rgba(10,0,21,0.5);
-  border-color: var(--pink);
-  box-shadow: 0 0 50px rgba(255,0,170,0.3), inset 0 0 40px rgba(255,0,170,0.1);
-  color: #fff;
+.secret-btn.revealing .inner::before { opacity: 0.8; }
+.secret-btn.revealing .inner-glow {
+  background: radial-gradient(circle, rgba(255,0,170,0.2), rgba(0,240,255,0.05), transparent 70%);
+  animation: secretSpin 4s linear infinite;
+  width: 80px;
+  height: 80px;
+  top: -10px;
+  left: -10px;
 }
 
-.secret-ripple {
+.secret-btn.revealing .ring-1 {
+  opacity: 0.5;
+  animation: ringExpand 2.5s ease-out infinite;
+  border-color: var(--pink);
+}
+.secret-btn.revealing .ring-2 {
+  opacity: 0.3;
+  animation: ringExpand 2.5s ease-out 0.5s infinite;
+  border-color: var(--cyan);
+}
+.secret-btn.revealing .ring-3 {
+  opacity: 0.2;
+  animation: ringExpand 2.5s ease-out 1s infinite;
+  border-color: var(--gold);
+}
+
+.secret-btn.revealing:hover {
+  transform: scale(1.15) !important;
+}
+.secret-btn.revealing:hover .inner {
+  border-color: var(--pink);
+  box-shadow: 0 0 40px rgba(255,0,170,0.3), 0 0 80px rgba(0,240,255,0.15);
+}
+.secret-btn.revealing:hover .inner-text {
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255,0,170,0.8), 0 0 40px rgba(0,240,255,0.4);
+}
+.secret-btn.revealing:hover .inner-glow {
+  background: radial-gradient(circle, rgba(255,0,170,0.3), rgba(0,240,255,0.1), transparent 70%);
+  width: 100px;
+  height: 100px;
+  top: -20px;
+  left: -20px;
+}
+
+/* ===== SPARKLE CANVAS ===== */
+.secret-sparkles {
   position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 202;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.secret-sparkles.active {
+  opacity: 1;
+}
+
+/* ===== RIPPLE ===== */
+.secret-ripple {
+  position: fixed;
+  z-index: 260;
+  pointer-events: none;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,0,170,0.4), transparent);
-  animation: rippleOut 1.5s ease-out forwards;
+  background: radial-gradient(circle, rgba(255,0,170,0.5), transparent);
+  animation: rippleOut 1.2s ease-out forwards;
 }
 @keyframes rippleOut {
   0% { width: 0; height: 0; opacity: 1; }
-  100% { width: 600px; height: 600px; opacity: 0; }
+  100% { width: 800px; height: 800px; opacity: 0; }
 }
 
+/* ===== FLASH ===== */
 .secret-flash {
   position: fixed;
   top: 0; left: 0;
@@ -926,33 +1022,37 @@ canvas#particles {
   transition: opacity 0.8s ease;
 }
 
+/* ===== IMAGE WRAP ===== */
 .secret-image-wrap {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  z-index: 299;
+  z-index: 270;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.15s ease;
 }
 .secret-image-wrap.show {
   opacity: 1;
 }
 .secret-image-wrap.fade-out {
   opacity: 0;
-  transition: opacity 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .secret-image-wrap img {
   max-width: 85vw;
   max-height: 85vh;
   border-radius: 24px;
-  box-shadow: 0 0 80px rgba(255,0,170,0.3), 0 0 160px rgba(0,240,255,0.15), 0 0 240px rgba(255,215,0,0.08);
-  border: 2px solid rgba(255,255,255,0.1);
-  transform: scale(0.9);
-  transition: transform 0.3s ease;
+  box-shadow:
+    0 0 60px rgba(255,0,170,0.3),
+    0 0 120px rgba(0,240,255,0.15),
+    0 0 180px rgba(255,215,0,0.08);
+  border: 2px solid rgba(255,255,255,0.08);
+  transform: scale(0.85);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .secret-image-wrap.show img {
   transform: scale(1);
@@ -965,9 +1065,17 @@ canvas#particles {
 
 <!-- ===== SECRET ===== -->
 <div class="secret-zone" id="secretZone"></div>
+<div class="secret-overlay" id="secretOverlay"></div>
 <div class="secret-btn" id="secretBtn">
-  <span class="inner">???</span>
+  <span class="secret-ring ring-1"></span>
+  <span class="secret-ring ring-2"></span>
+  <span class="secret-ring ring-3"></span>
+  <span class="inner">
+    <span class="inner-text">?</span>
+    <span class="inner-glow"></span>
+  </span>
 </div>
+<canvas class="secret-sparkles" id="secretSparkles"></canvas>
 <div class="secret-flash" id="secretFlash"></div>
 <div class="secret-image-wrap" id="secretImageWrap">
   <img src="secret.jpg" alt="secret" id="secretImage">
@@ -1563,34 +1671,111 @@ initPlayer();
   const btn = document.getElementById('secretBtn');
   const flash = document.getElementById('secretFlash');
   const imgWrap = document.getElementById('secretImageWrap');
+  const overlay = document.getElementById('secretOverlay');
+  const sparkCanvas = document.getElementById('secretSparkles');
+  const sCtx = sparkCanvas.getContext('2d');
 
   let hoverStart = 0;
   let revealTimer = null;
   let isRevealed = false;
   let alreadyTriggered = false;
   let wasPlayingBefore = false;
+  let sparkles = [];
+  let sparkAnimId = null;
 
   function easeOutBack(t) {
     const c1 = 1.70158;
     const c3 = c1 + 1;
     return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
   }
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function smoothInterpolate(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
+  function resizeSparkCanvas() {
+    sparkCanvas.width = window.innerWidth;
+    sparkCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeSparkCanvas);
+  resizeSparkCanvas();
+
+  class Sparkle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * sparkCanvas.width;
+      this.y = Math.random() * sparkCanvas.height;
+      this.size = Math.random() * 3 + 1;
+      this.speedX = (Math.random() - 0.5) * 1.2;
+      this.speedY = (Math.random() - 0.5) * 1.2;
+      this.life = 1;
+      this.decay = 0.003 + Math.random() * 0.007;
+      this.color = ['#ff00aa', '#00f0ff', '#ffd700', '#7b2ff7', '#00ff88'][Math.floor(Math.random() * 5)];
+      this.angle = Math.random() * Math.PI * 2;
+      this.spin = (Math.random() - 0.5) * 0.1;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.angle += this.spin;
+      this.life -= this.decay;
+    }
+    draw() {
+      const alpha = this.life * 0.8;
+      sCtx.save();
+      sCtx.translate(this.x, this.y);
+      sCtx.rotate(this.angle);
+      sCtx.globalAlpha = alpha;
+      sCtx.shadowBlur = 10;
+      sCtx.shadowColor = this.color;
+      sCtx.fillStyle = this.color;
+      sCtx.beginPath();
+      // star shape
+      const s = this.size;
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 - Math.PI / 2;
+        if (i === 0) sCtx.moveTo(Math.cos(a) * s, Math.sin(a) * s);
+        else sCtx.lineTo(Math.cos(a) * s, Math.sin(a) * s);
+        const a2 = a + Math.PI / 4;
+        sCtx.lineTo(Math.cos(a2) * s * 0.4, Math.sin(a2) * s * 0.4);
+      }
+      sCtx.closePath();
+      sCtx.fill();
+      sCtx.shadowBlur = 0;
+      sCtx.restore();
+    }
   }
 
-  function smoothInterpolate(t) {
-    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  function initSparkles() {
+    for (let i = 0; i < 40; i++) sparkles.push(new Sparkle());
+  }
+  initSparkles();
+
+  function animateSparkles() {
+    sCtx.clearRect(0, 0, sparkCanvas.width, sparkCanvas.height);
+    sparkles.forEach(s => {
+      s.update();
+      s.draw();
+      if (s.life <= 0) s.reset();
+    });
+    sparkAnimId = requestAnimationFrame(animateSparkles);
   }
 
   function createRipple(x, y) {
-    const ripple = document.createElement('div');
-    ripple.className = 'secret-ripple';
-    ripple.style.left = (x - 300) + 'px';
-    ripple.style.top = (y - 300) + 'px';
-    document.body.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 1500);
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const ripple = document.createElement('div');
+        ripple.className = 'secret-ripple';
+        const size = 200 + i * 100;
+        ripple.style.left = (x - size / 2) + 'px';
+        ripple.style.top = (y - size / 2) + 'px';
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.background = `radial-gradient(circle, ${
+          ['rgba(255,0,170,0.5)', 'rgba(0,240,255,0.4)', 'rgba(255,215,0,0.3)'][i]
+        }, transparent)`;
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 1200);
+      }, i * 100);
+    }
   }
 
   zone.addEventListener('mouseenter', () => {
@@ -1598,9 +1783,7 @@ initPlayer();
     hoverStart = Date.now();
     btn.classList.remove('revealing');
     btn.style.opacity = '0';
-    btn.style.transform = 'scale(0.1) rotate(-360deg)';
-    btn.style.boxShadow = 'none';
-    btn.style.animation = 'none';
+    btn.style.transform = 'scale(0.05) rotate(-720deg)';
     isRevealed = false;
 
     revealTimer = setInterval(() => {
@@ -1608,25 +1791,26 @@ initPlayer();
       const raw = Math.min(elapsed / 10000, 1);
       const t = smoothInterpolate(raw);
 
-      const opacity = t * 0.85;
-      const scale = 0.1 + 0.9 * easeOutBack(Math.min(raw * 1.2, 1));
-      const rotate = -360 + 360 * easeOutCubic(raw);
+      const opacity = t * 0.9;
+      const scale = 0.05 + 0.95 * easeOutBack(Math.min(raw * 1.15, 1));
+      const rotate = -720 + 720 * easeOutCubic(raw);
 
       btn.style.opacity = opacity;
       btn.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
-
-      if (raw >= 0.5) {
-        btn.style.boxShadow = `0 0 ${40 * (raw - 0.5) * 2}px rgba(255,0,170,${0.15 * (raw - 0.5) * 2})`;
-      }
+      btn.style.filter = `brightness(${0.5 + 0.5 * t})`;
 
       if (raw >= 1 && !isRevealed) {
         isRevealed = true;
         btn.style.opacity = '1';
         btn.style.transform = 'scale(1) rotate(0deg)';
-        btn.style.boxShadow = '';
-        btn.style.animation = '';
+        btn.style.filter = 'brightness(1)';
         btn.classList.add('revealing');
         clearInterval(revealTimer);
+
+        // Start sparkles
+        document.querySelector('.secret-sparkles').classList.add('active');
+        if (sparkAnimId) cancelAnimationFrame(sparkAnimId);
+        animateSparkles();
       }
     }, 16);
   });
@@ -1636,8 +1820,8 @@ initPlayer();
       clearInterval(revealTimer);
       btn.style.transition = 'all 0.4s ease';
       btn.style.opacity = '0';
-      btn.style.transform = 'scale(0.1) rotate(-360deg)';
-      btn.style.boxShadow = 'none';
+      btn.style.transform = 'scale(0.05) rotate(-720deg)';
+      btn.style.filter = 'brightness(1)';
       btn.classList.remove('revealing');
       setTimeout(() => { btn.style.transition = 'none'; }, 400);
     }
@@ -1658,20 +1842,26 @@ initPlayer();
       wasPlayingBefore = false;
     }
 
-    // Ripple effect at cursor
-    createRipple(e.clientX || 64, e.clientY || 64);
+    // Stop sparkles
+    document.querySelector('.secret-sparkles').classList.remove('active');
+    if (sparkAnimId) { cancelAnimationFrame(sparkAnimId); sparkAnimId = null; }
+
+    // Show overlay (hides all UI)
+    overlay.classList.add('active');
+
+    // Triple ripple at cursor
+    createRipple(e.clientX || 120, e.clientY || 120);
 
     // Hide button
     btn.classList.remove('revealing');
     btn.style.transition = 'all 0.3s ease';
     btn.style.opacity = '0';
     btn.style.transform = 'scale(0.3) rotate(-180deg)';
-    btn.style.boxShadow = 'none';
-    btn.style.animation = 'none';
+    btn.style.filter = 'brightness(1)';
     clearInterval(revealTimer);
     setTimeout(() => { btn.style.transition = 'none'; }, 300);
 
-    // Double flash
+    // Flash sequence
     flash.style.background = 'white';
     flash.classList.add('fire');
     setTimeout(() => {
@@ -1679,8 +1869,7 @@ initPlayer();
       flash.classList.add('fire-away');
       setTimeout(() => {
         flash.classList.remove('fire-away');
-        // Second flash with color
-        flash.style.background = 'radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,0,170,0.3))';
+        flash.style.background = '#ff00aa';
         flash.classList.add('fire');
         setTimeout(() => {
           flash.classList.remove('fire');
@@ -1688,21 +1877,22 @@ initPlayer();
           setTimeout(() => {
             flash.classList.remove('fire-away');
             flash.style.background = 'white';
-          }, 800);
-        }, 60);
-      }, 800);
-    }, 60);
+          }, 1000);
+        }, 80);
+      }, 600);
+    }, 80);
 
     // Show image after flash
     setTimeout(() => {
       imgWrap.classList.add('show');
-    }, 180);
+    }, 200);
 
-    // Hold image
+    // Hold then fade
     setTimeout(() => {
       imgWrap.classList.add('fade-out');
       setTimeout(() => {
         imgWrap.classList.remove('show', 'fade-out');
+        overlay.classList.remove('active');
         // Resume music
         if (wasPlayingBefore && audio) {
           audio.play().then(() => {
@@ -1712,7 +1902,7 @@ initPlayer();
         }
         // Reset after full cycle
         setTimeout(() => { alreadyTriggered = false; }, 2000);
-      }, 2500);
+      }, 3000);
     }, 2000);
   });
 })();

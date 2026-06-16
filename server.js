@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,8 +14,29 @@ const USER_NAMES = [
   'Влад', 'Елисей'
 ];
 
+const QUIZ = [
+  { q: 'Что такое солнце?', opts: ['Звезда', 'Планета', 'Спутник', 'Астероид'], ans: 0 },
+  { q: 'Сколько дней в неделе?', opts: ['5', '6', '7', '8'], ans: 2 },
+  { q: 'Какого цвета небо?', opts: ['Зелёного', 'Красного', 'Голубого', 'Жёлтого'], ans: 2 },
+  { q: 'Кто написал "Войну и мир"?', opts: ['Достоевский', 'Толстой', 'Пушкин', 'Чехов'], ans: 1 },
+  { q: 'Столица Франции?', opts: ['Лондон', 'Берлин', 'Париж', 'Мадрид'], ans: 2 },
+  { q: 'Сколько континентов на Земле?', opts: ['5', '6', '7', '8'], ans: 2 },
+  { q: 'Какое животное самое быстрое?', opts: ['Лев', 'Гепард', 'Тигр', 'Лошадь'], ans: 1 },
+  { q: 'Из чего делают бумагу?', opts: ['Металл', 'Пластик', 'Древесина', 'Стекло'], ans: 2 },
+  { q: 'Сколько месяцев в году?', opts: ['10', '11', '12', '13'], ans: 2 },
+  { q: 'Как называется наша галактика?', opts: ['Андромеда', 'Млечный Путь', 'Туманность', 'Солнечная'], ans: 1 },
+  { q: 'Что измеряют в градусах?', opts: ['Вес', 'Длину', 'Температуру', 'Громкость'], ans: 2 },
+  { q: 'Какой газ мы вдыхаем?', opts: ['Углекислый', 'Азот', 'Кислород', 'Водород'], ans: 2 },
+  { q: 'Сколько букв в русском алфавите?', opts: ['30', '31', '32', '33'], ans: 3 },
+  { q: 'Кто изобрёл телефон?', opts: ['Эдисон', 'Белл', 'Тесла', 'Маркони'], ans: 1 },
+  { q: 'В каком году человек высадился на Луну?', opts: ['1965', '1967', '1969', '1971'], ans: 2 }
+];
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Activation sessions: { [name]: { index, startTime } }
+const activationSessions = {};
 
 function loadData() {
   try {
@@ -26,15 +48,29 @@ function loadData() {
   }
   const users = {};
   USER_NAMES.forEach(name => {
-    users[name] = { aura: 100, fines: [] };
+    users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 } };
   });
   return { users };
 }
 
 let data = loadData();
 
+// Migrate old data
+Object.values(data.users).forEach(u => {
+  if (!u.faourines) u.faourines = { unactivated: 0, activated: 0 };
+});
+
 function saveData() {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+}
+
+function generateKey() {
+  const parts = [
+    crypto.randomBytes(5).toString('hex'),
+    crypto.randomBytes(3).toString('hex'),
+    crypto.randomBytes(3).toString('hex')
+  ];
+  return parts.join('-');
 }
 
 app.get('/api/users', (req, res) => {
@@ -92,10 +128,104 @@ app.post('/api/reset', (req, res) => {
     return res.status(403).json({ error: 'Только оператор' });
   }
   USER_NAMES.forEach(name => {
-    data.users[name] = { aura: 100, fines: [] };
+    data.users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 } };
   });
   saveData();
   res.json({ success: true });
+});
+
+app.post('/api/mine/check', (req, res) => {
+  const { name } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+
+  const key = generateKey();
+  const success = Math.random() < 0.01;
+
+  if (success) {
+    data.users[name].faourines.unactivated += 1;
+    saveData();
+    res.json({ success: true, key, unactivated: data.users[name].faourines.unactivated });
+  } else {
+    res.json({ success: false, key });
+  }
+});
+
+app.post('/api/activate/start', (req, res) => {
+  const { name } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  if (data.users[name].faourines.unactivated < 1) {
+    return res.status(400).json({ error: 'Нет неактивированных фауринов' });
+  }
+  activationSessions[name] = { index: 0, startTime: Date.now() };
+  res.json({
+    total: QUIZ.length,
+    question: QUIZ[0].q,
+    options: QUIZ[0].opts,
+    index: 0
+  });
+});
+
+app.post('/api/activate/answer', (req, res) => {
+  const { name, answer } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  const session = activationSessions[name];
+  if (!session) return res.status(400).json({ error: 'Активация не начата' });
+
+  const elapsed = (Date.now() - session.startTime) / 1000;
+  const questionElapsed = elapsed - session.index * 5;
+  if (questionElapsed > 5 || answer === -1) {
+    delete activationSessions[name];
+    return res.json({ correct: false, timeout: true, message: 'Время вышло!', correctAnswer: QUIZ[session.index].ans });
+  }
+
+  const qIdx = session.index;
+  const q = QUIZ[qIdx];
+  if (!q) {
+    delete activationSessions[name];
+    return res.status(400).json({ error: 'Сессия повреждена' });
+  }
+
+  const correct = answer === q.ans;
+  if (!correct) {
+    delete activationSessions[name];
+    return res.json({ correct: false, timeout: false, message: 'Неправильный ответ!', correctAnswer: q.ans });
+  }
+
+  session.index++;
+  if (session.index >= QUIZ.length) {
+    data.users[name].faourines.unactivated -= 1;
+    data.users[name].faourines.activated += 1;
+    saveData();
+    delete activationSessions[name];
+    return res.json({
+      correct: true,
+      done: true,
+      activated: data.users[name].faourines.activated
+    });
+  }
+
+  const nextQ = QUIZ[session.index];
+  res.json({
+    correct: true,
+    done: false,
+    question: nextQ.q,
+    options: nextQ.opts,
+    index: session.index
+  });
+});
+
+app.post('/api/sell', (req, res) => {
+  const { name } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  if (data.users[name].faourines.activated < 1) {
+    return res.status(400).json({ error: 'Нет активированных фауринов' });
+  }
+
+  const reward = Math.floor(Math.random() * 301) + 400;
+  data.users[name].faourines.activated -= 1;
+  data.users[name].aura += reward;
+  saveData();
+  res.json({ success: true, reward, aura: data.users[name].aura, activated: data.users[name].faourines.activated });
 });
 
 app.listen(PORT, '0.0.0.0', () => {

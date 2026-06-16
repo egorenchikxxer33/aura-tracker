@@ -1383,6 +1383,380 @@ canvas#particles {
 .secret-image-wrap.show img {
   transform: scale(1);
 }
+
+/* ===== FAOURINE STATS ===== */
+.faourine-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.faourine-stat {
+  flex: 1;
+  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.faourine-stat:hover {
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.faourine-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 6px;
+}
+.faourine-stat:first-child .faourine-icon { color: var(--cyan); text-shadow: 0 0 20px rgba(0,229,255,0.3); }
+.faourine-stat:last-child .faourine-icon { color: var(--gold); text-shadow: 0 0 20px rgba(255,204,0,0.3); }
+.faourine-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.faourine-value {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  display: block;
+  transition: all 0.3s ease;
+}
+.faourine-stat:first-child .faourine-value { color: var(--cyan); }
+.faourine-stat:last-child .faourine-value { color: var(--gold); text-shadow: 0 0 20px rgba(255,204,0,0.2); }
+
+/* ===== MINING TERMINAL ===== */
+.mine-terminal {
+  margin: 14px 0;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(0,229,255,0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.mine-term-header {
+  padding: 8px 14px;
+  background: rgba(0,229,255,0.06);
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,229,255,0.08);
+}
+.mine-term-body {
+  padding: 10px 14px;
+  max-height: 200px;
+  overflow-y: auto;
+  min-height: 60px;
+}
+.mine-term-body::-webkit-scrollbar { width: 3px; }
+.mine-term-body::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.2); border-radius: 2px; }
+.mine-term-line { color: var(--cyan); word-break: break-all; }
+.mine-term-line.dim { color: rgba(0,229,255,0.25); }
+.mine-term-line.success { color: var(--lime); text-shadow: 0 0 10px rgba(0,255,119,0.3); }
+.mine-term-line.fail { color: var(--rose); }
+
+/* Mining progress */
+.mine-progress-wrap {
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 6px 0 14px;
+}
+.mine-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--cyan), var(--pink));
+  border-radius: 2px;
+  transition: width 0.15s linear;
+}
+
+.mine-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.mine-actions button { flex: 1; }
+
+/* ===== QUIZ ===== */
+.quiz-box {
+  padding: 40px;
+  max-width: 560px;
+  width: 92%;
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.show .quiz-box { transform: scale(1); }
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.quiz-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--pink);
+  font-weight: 700;
+}
+.quiz-counter {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.quiz-timer-wrap {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.quiz-timer-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--lime), var(--gold), var(--pink));
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+.quiz-question {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  line-height: 1.4;
+  min-height: 56px;
+}
+.quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.quiz-opt {
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+.quiz-opt:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+.quiz-opt:active { transform: scale(0.97); }
+.quiz-opt.selected { border-color: var(--cyan); background: rgba(0,229,255,0.08); }
+.quiz-opt.correct { border-color: var(--lime); background: rgba(0,255,119,0.08); color: var(--lime); }
+.quiz-opt.wrong { border-color: var(--rose); background: rgba(255,34,102,0.08); color: var(--rose); }
+.quiz-opt:disabled { cursor: not-allowed; opacity: 0.6; }
+
+.quiz-result {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 12px;
+  margin-top: 8px;
+  display: none;
+}
+.quiz-result.show { display: block; }
+.quiz-result.good { color: var(--lime); background: rgba(0,255,119,0.06); border: 1px solid rgba(0,255,119,0.15); }
+.quiz-result.bad { color: var(--rose); background: rgba(255,34,102,0.06); border: 1px solid rgba(255,34,102,0.15); }
+.quiz-result.waiting { color: var(--gold); background: rgba(255,204,0,0.06); border: 1px solid rgba(255,204,0,0.15); }
+
+@media (max-width: 500px) {
+  .quiz-options { grid-template-columns: 1fr; }
+  .quiz-box { padding: 24px; }
+  .quiz-question { font-size: 16px; }
+}
+
+/* ===== SELL ANIMATION ===== */
+.sell-box {
+  padding: 50px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+.modal-overlay.show .sell-box { transform: scale(1); }
+
+.sell-particle-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sell-stage {
+  position: relative;
+  z-index: 2;
+  transition: all 0.5s ease;
+}
+.sell-stage.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Stage 1 - loading */
+.sell-icon {
+  font-size: 60px;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(255,204,0,0.3), 0 0 80px rgba(255,204,0,0.1);
+  margin-bottom: 16px;
+  animation: sellIconPulse 1.5s ease-in-out infinite;
+}
+@keyframes sellIconPulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; text-shadow: 0 0 40px rgba(255,204,0,0.3); }
+  50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 60px rgba(255,204,0,0.5), 0 0 120px rgba(255,204,0,0.2); }
+}
+.sell-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.sell-subtitle {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+.sell-loader {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.sell-loader span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: sellBounce 1.2s ease-in-out infinite;
+}
+.sell-loader span:nth-child(2) { animation-delay: 0.15s; background: var(--cyan); }
+.sell-loader span:nth-child(3) { animation-delay: 0.3s; background: var(--pink); }
+@keyframes sellBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Stage 2 - result */
+.sell-result-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 300px; height: 300px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,204,0,0.15), transparent 70%);
+  border-radius: 50%;
+  animation: sellGlowPulse 2s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+@keyframes sellGlowPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+}
+.sell-result-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 50px;
+  color: var(--gold);
+  text-shadow: 0 0 40px rgba(255,204,0,0.4);
+  margin-bottom: 12px;
+  animation: sellRevealStar 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes sellRevealStar {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.sell-result-label {
+  position: relative;
+  z-index: 2;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.sell-result-amount {
+  position: relative;
+  z-index: 2;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 64px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold), #fff4b0, var(--gold));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: sellAmountShimmer 2s ease infinite, sellAmountReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform: scale(0);
+}
+@keyframes sellAmountReveal {
+  0% { transform: scale(0) translateY(20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes sellAmountShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.sell-result-sub {
+  position: relative;
+  z-index: 2;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+.sell-flash {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,204,0,0.15);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  animation: sellFlashPop 0.6s ease forwards;
+}
+@keyframes sellFlashPop {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Sell particles */
+.sell-sparkle {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: sellSparkleFly 1.5s ease-out forwards;
+}
+@keyframes sellSparkleFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
 </style>
 </head>
 <body>
@@ -1457,8 +1831,48 @@ canvas#particles {
         <div class="leaderboard-list" id="leaderboard"></div>
       </div>
 
+      <!-- ===== MINING PANEL (user) ===== -->
+      <div id="miningPanel" class="admin-panel glass" style="display:none;">
+        <h3>⛏ ДОБЫЧА ФАУРИНА</h3>
+
+        <div class="faourine-stats">
+          <div class="faourine-stat">
+            <span class="faourine-icon">◇</span>
+            <span class="faourine-label">Неактивированных</span>
+            <span class="faourine-value" id="unactivatedCount">0</span>
+          </div>
+          <div class="faourine-stat">
+            <span class="faourine-icon">◆</span>
+            <span class="faourine-label">Активированных</span>
+            <span class="faourine-value" id="activatedCount">0</span>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h4>Майнинг</h4>
+          <button class="admin-btn cyan" id="mineBtn" onclick="startMining()" style="width:100%;">⛏ Начать добычу</button>
+        </div>
+
+        <!-- Terminal -->
+        <div class="mine-terminal" id="mineTerminal">
+          <div class="mine-term-header">FAOURINE MINER v1.0</div>
+          <div class="mine-term-body" id="termBody">
+            <div class="mine-term-line dim">Нажми "Начать добычу"</div>
+          </div>
+        </div>
+
+        <div class="mine-progress-wrap" id="mineProgressWrap" style="display:none;">
+          <div class="mine-progress-bar" id="mineProgressBar"></div>
+        </div>
+
+        <div class="mine-actions" id="mineActions">
+          <button class="admin-btn pink" id="activateBtn" onclick="startActivation()" disabled style="display:none;">◇ Активировать фаурин</button>
+          <button class="admin-btn cyan" id="sellBtn" onclick="startSellAnimation()" disabled style="display:none;">◆ Продать фаурин</button>
+        </div>
+      </div>
+
       <div id="adminPanel" class="admin-panel glass" style="display:none;">
-        <h3>ПАНЕЛЬ ОПЕРАТОРА</h3>
+        <h3>⚡ ПАНЕЛЬ ОПЕРАТОРА</h3>
 
         <div class="admin-section">
           <h4>Изменить ауру</h4>
@@ -1524,6 +1938,45 @@ canvas#particles {
     <div class="modal-actions">
       <button class="admin-btn outline" onclick="closeModal()">Отмена</button>
       <button class="admin-btn danger" id="modalConfirm" onclick="resetAll()">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ OVERLAY ===== -->
+<div class="modal-overlay" id="quizOverlay">
+  <div class="quiz-box glass">
+    <div class="quiz-header">
+      <span class="quiz-title">● АКТИВАЦИЯ ФАУРИНА</span>
+      <span class="quiz-counter" id="quizCounter">1/15</span>
+    </div>
+    <div class="quiz-timer-wrap">
+      <div class="quiz-timer-bar" id="quizTimerBar"></div>
+    </div>
+    <div class="quiz-question" id="quizQuestion">Что такое солнце?</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-result" id="quizResult"></div>
+  </div>
+</div>
+
+<!-- ===== SELL ANIMATION OVERLAY ===== -->
+<div class="modal-overlay" id="sellOverlay">
+  <div class="sell-box glass" id="sellBox">
+    <div class="sell-particle-container" id="sellParticles"></div>
+    <div class="sell-stage" id="sellStage1">
+      <div class="sell-icon">◆</div>
+      <div class="sell-title">Активированный фаурин</div>
+      <div class="sell-subtitle">Продажа на рынке ауры...</div>
+      <div class="sell-loader">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <div class="sell-stage hidden" id="sellStage2">
+      <div class="sell-flash" id="sellFlashEffect"></div>
+      <div class="sell-result-glow"></div>
+      <div class="sell-result-icon">✦</div>
+      <div class="sell-result-label">ПОЛУЧЕНО АУРЫ</div>
+      <div class="sell-result-amount" id="sellAmount">0</div>
+      <div class="sell-result-sub">Аура зачислена на счёт</div>
     </div>
   </div>
 </div>
@@ -1756,6 +2209,9 @@ async function fetchUsers() {
     renderLeaderboard(data);
     if (currentRole === 'operator') {
       showFines();
+    }
+    if (currentRole === 'user') {
+      updateMiningUI(data);
     }
     updateCurrentUserAura(data);
   } catch (e) {
@@ -2264,6 +2720,418 @@ initPlayer();
     }, 2000);
   });
 })();
+
+// ===== MINING =====
+let isMining = false;
+let mineTermLines = 0;
+
+function addTermLine(text, cls = '') {
+  const body = document.getElementById('termBody');
+  const div = document.createElement('div');
+  div.className = 'mine-term-line ' + cls;
+  div.textContent = text;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  mineTermLines++;
+}
+
+function showMiningPanel(userData) {
+  const panel = document.getElementById('miningPanel');
+  if (currentRole === 'user') {
+    panel.style.display = 'block';
+    updateMiningUI(userData);
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function updateMiningUI(data) {
+  const user = data ? data.find(u => u.name === currentUser) : usersData.find(u => u.name === currentUser);
+  if (!user) return;
+  const fa = user.faourines || { unactivated: 0, activated: 0 };
+  document.getElementById('unactivatedCount').textContent = fa.unactivated;
+  document.getElementById('activatedCount').textContent = fa.activated;
+
+  const actBtn = document.getElementById('activateBtn');
+  const sellBtn = document.getElementById('sellBtn');
+  if (fa.unactivated > 0) {
+    actBtn.style.display = 'inline-block';
+    actBtn.disabled = false;
+  } else {
+    actBtn.style.display = 'none';
+  }
+  if (fa.activated > 0) {
+    sellBtn.style.display = 'inline-block';
+    sellBtn.disabled = false;
+  } else {
+    sellBtn.style.display = 'none';
+  }
+}
+
+async function startMining() {
+  if (isMining) return;
+  isMining = true;
+
+  const btn = document.getElementById('mineBtn');
+  const termBody = document.getElementById('termBody');
+  const progressWrap = document.getElementById('mineProgressWrap');
+  const progressBar = document.getElementById('mineProgressBar');
+
+  btn.disabled = true;
+  btn.textContent = '⛏ Добыча...';
+  termBody.innerHTML = '';
+  mineTermLines = 0;
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '0%';
+
+  addTermLine('>> Инициализация майнера...');
+  await sleep(400);
+
+  const maxAttempts = 30 + Math.floor(Math.random() * 40);
+  let found = false;
+
+  for (let i = 0; i < maxAttempts && !found; i++) {
+    const key = generateFakeKey();
+    const pct = ((i + 1) / maxAttempts) * 100;
+    progressBar.style.width = pct + '%';
+
+    if (i % 2 === 0) {
+      addTermLine(`Подбор: ${key}`, 'dim');
+    }
+
+    if (i === maxAttempts - 1 || (i > 5 && Math.random() < 0.03)) {
+      // Actually check with server
+      try {
+        const res = await fetch('/api/mine/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: currentUser })
+        });
+        const data = await res.json();
+        if (data.success) {
+          addTermLine('');
+          addTermLine('========================================', 'success');
+          addTermLine(`>> КОД НАЙДЕН: ${data.key}`, 'success');
+          addTermLine('>> ФАУРИН ПОЛУЧЕН!', 'success');
+          addTermLine('========================================', 'success');
+          found = true;
+          fetchUsers();
+        } else {
+          addTermLine(`Неудача: ${key}`, 'fail');
+        }
+      } catch (e) {
+        addTermLine('Ошибка соединения', 'fail');
+      }
+    }
+
+    await sleep(80 + Math.random() * 120);
+  }
+
+  if (!found) {
+    addTermLine('');
+    addTermLine('>> Блок не найден. Попробуй ещё раз.', 'fail');
+  }
+
+  progressBar.style.width = '100%';
+  await sleep(500);
+  progressWrap.style.display = 'none';
+  btn.disabled = false;
+  btn.textContent = '⛏ Начать добычу';
+  isMining = false;
+
+  if (found) {
+    updateMiningUI();
+  }
+}
+
+function generateFakeKey() {
+  const chars = 'abcdef0123456789';
+  let p1 = '', p2 = '', p3 = '';
+  for (let i = 0; i < 10; i++) p1 += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < 6; i++) p2 += chars[Math.floor(Math.random() * chars.length)];
+  for (let i = 0; i < 6; i++) p3 += chars[Math.floor(Math.random() * chars.length)];
+  return `${p1}-${p2}-${p3}`;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ===== ACTIVATION QUIZ =====
+let quizActive = false;
+let quizTimer = null;
+let quizTimerStart = 0;
+
+async function startActivation() {
+  if (quizActive) return;
+  quizActive = true;
+
+  const overlay = document.getElementById('quizOverlay');
+  const result = document.getElementById('quizResult');
+  result.style.display = 'none';
+  result.className = 'quiz-result';
+  overlay.classList.add('show');
+
+  try {
+    const res = await fetch('/api/activate/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      showToast(data.error, 'bad');
+      overlay.classList.remove('show');
+      quizActive = false;
+      return;
+    }
+
+    showQuestion(data);
+  } catch (e) {
+    showToast('Ошибка запуска', 'bad');
+    overlay.classList.remove('show');
+    quizActive = false;
+  }
+}
+
+function showQuestion(data) {
+  const overlay = document.getElementById('quizOverlay');
+  if (!overlay.classList.contains('show')) return;
+
+  document.getElementById('quizCounter').textContent = `${data.index + 1}/15`;
+  document.getElementById('quizQuestion').textContent = data.question;
+
+  const optsDiv = document.getElementById('quizOptions');
+  optsDiv.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  data.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${labels[i]}. ${opt}`;
+    btn.onclick = () => answerQuiz(i);
+    btn.dataset.index = i;
+    optsDiv.appendChild(btn);
+  });
+
+  // Start timer
+  const timerBar = document.getElementById('quizTimerBar');
+  timerBar.style.width = '100%';
+  timerBar.style.transition = 'width 5s linear';
+  quizTimerStart = Date.now();
+
+  if (quizTimer) clearTimeout(quizTimer);
+  quizTimer = setTimeout(() => {
+    timerBar.style.transition = 'none';
+    timerBar.style.width = '0%';
+    answerQuiz(-1); // timeout
+  }, 5000);
+
+  // Force reflow for transition
+  void timerBar.offsetWidth;
+  timerBar.style.width = '0%';
+}
+
+async function answerQuiz(answer) {
+  if (!quizActive) return;
+  if (quizTimer) { clearTimeout(quizTimer); quizTimer = null; }
+
+  const opts = document.querySelectorAll('.quiz-opt');
+  const result = document.getElementById('quizResult');
+  result.style.display = 'none';
+
+  // Disable all buttons
+  opts.forEach(b => b.disabled = true);
+
+  // Show selected
+  if (answer >= 0 && opts[answer]) {
+    opts[answer].classList.add('selected');
+  }
+
+  try {
+    const res = await fetch('/api/activate/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser, answer })
+    });
+    const data = await res.json();
+
+    if (data.timeout) {
+      result.textContent = '⏰ Время вышло!';
+      result.className = 'quiz-result show bad';
+      opts.forEach((b, i) => {
+        if (i === data.correctAnswer) b.classList.add('correct');
+      });
+      await sleep(2000);
+      endQuiz(false);
+      return;
+    }
+
+    if (!data.correct) {
+      result.textContent = data.message || 'Неправильно!';
+      result.className = 'quiz-result show bad';
+      opts.forEach((b, i) => {
+        if (i === answer) b.classList.add('wrong');
+        if (i === data.correctAnswer) b.classList.add('correct');
+      });
+      await sleep(2000);
+      endQuiz(false);
+      return;
+    }
+
+    // Correct!
+    if (data.done) {
+      result.textContent = '✓ Все вопросы пройдены! Фаурин активирован!';
+      result.className = 'quiz-result show good';
+      opts.forEach(b => b.classList.add('correct'));
+      await sleep(1500);
+      endQuiz(true);
+      return;
+    }
+
+    // Next question
+    opts.forEach(b => b.classList.add('correct'));
+    await sleep(400);
+    showQuestion(data);
+  } catch (e) {
+    result.textContent = 'Ошибка';
+    result.className = 'quiz-result show bad';
+    await sleep(1500);
+    endQuiz(false);
+  }
+}
+
+function endQuiz(success) {
+  quizActive = false;
+  const overlay = document.getElementById('quizOverlay');
+  overlay.classList.remove('show');
+
+  if (success) {
+    fetchUsers();
+    setTimeout(() => updateMiningUI(), 300);
+    showToast('◇ Фаурин активирован!', 'good');
+  } else {
+    showToast('✕ Активация не удалась', 'bad');
+  }
+}
+
+// ===== SELL ANIMATION =====
+let sellAnimActive = false;
+
+async function startSellAnimation() {
+  if (sellAnimActive) return;
+  sellAnimActive = true;
+
+  const overlay = document.getElementById('sellOverlay');
+  const stage1 = document.getElementById('sellStage1');
+  const stage2 = document.getElementById('sellStage2');
+  const amountEl = document.getElementById('sellAmount');
+  const particleContainer = document.getElementById('sellParticles');
+
+  stage1.classList.remove('hidden');
+  stage2.classList.add('hidden');
+  particleContainer.innerHTML = '';
+  overlay.classList.add('show');
+
+  // Spawn particles during stage 1
+  for (let i = 0; i < 30; i++) {
+    spawnSellParticle(particleContainer);
+  }
+  let particleInterval = setInterval(() => spawnSellParticle(particleContainer), 100);
+
+  // Wait then sell
+  await sleep(2500);
+  clearInterval(particleInterval);
+
+  // Call sell API
+  try {
+    const res = await fetch('/api/sell', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser })
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      showToast('Ошибка продажи', 'bad');
+      overlay.classList.remove('show');
+      sellAnimActive = false;
+      return;
+    }
+
+    // Show result
+    stage1.classList.add('hidden');
+    stage2.classList.remove('hidden');
+    amountEl.textContent = '0';
+
+    // Animate amount counting up
+    const reward = data.reward;
+    const duration = 1500;
+    const startTime = Date.now();
+
+    function animateAmount() {
+      const elapsed = Date.now() - startTime;
+      const pct = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - pct, 3);
+      const current = Math.floor(eased * reward);
+      amountEl.textContent = current;
+      if (pct < 1) {
+        requestAnimationFrame(animateAmount);
+      } else {
+        amountEl.textContent = reward;
+      }
+    }
+    requestAnimationFrame(animateAmount);
+
+    // Create celebration particles
+    for (let i = 0; i < 50; i++) {
+      setTimeout(() => spawnSellParticle(particleContainer, true), i * 30);
+    }
+
+    await sleep(3000);
+    overlay.classList.remove('show');
+    fetchUsers();
+    setTimeout(() => updateMiningUI(), 300);
+    showToast(`✦ Получено ${reward} ауры!`, 'good');
+  } catch (e) {
+    showToast('Ошибка продажи', 'bad');
+    overlay.classList.remove('show');
+  }
+  sellAnimActive = false;
+}
+
+function spawnSellParticle(container, big = false) {
+  const el = document.createElement('div');
+  el.className = 'sell-sparkle';
+  const size = big ? 6 + Math.random() * 8 : 3 + Math.random() * 5;
+  const colors = ['#ffcc00', '#ff0088', '#00e5ff', '#ff6600', '#fff4b0'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  const startX = 40 + Math.random() * 20;
+  const startY = 30 + Math.random() * 40;
+  const tx = (Math.random() - 0.5) * 300;
+  const ty = -50 - Math.random() * 200;
+  el.style.cssText = `
+    left: ${startX}%;
+    top: ${startY}%;
+    width: ${size}px;
+    height: ${size}px;
+    background: ${color};
+    box-shadow: 0 0 6px ${color};
+    --tx: ${tx}px;
+    --ty: ${ty}px;
+  `;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+
+// Override enterDashboard to show mining panel
+const origEnterDashboard = enterDashboard;
+enterDashboard = function() {
+  origEnterDashboard();
+  if (currentRole === 'user') {
+    document.getElementById('miningPanel').style.display = 'block';
+    setTimeout(() => updateMiningUI(), 500);
+  }
+};
 </script>
 </body>
 </html>

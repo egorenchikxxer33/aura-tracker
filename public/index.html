@@ -2178,6 +2178,7 @@ function enterDashboard() {
 
 function logout() {
   if (pollingInterval) clearInterval(pollingInterval);
+  if (isMining) { miningCancelled = true; isMining = false; }
   currentUser = null;
   currentRole = null;
   document.getElementById('dashboard').classList.add('hidden');
@@ -2768,80 +2769,99 @@ function updateMiningUI(data) {
   }
 }
 
-async function startMining() {
-  if (isMining) return;
-  isMining = true;
+let miningCancelled = false;
 
+function startMining() {
+  if (isMining) {
+    // Stop mining
+    miningCancelled = true;
+    const btn = document.getElementById('mineBtn');
+    btn.textContent = '⏹ Останавливаем...';
+    return;
+  }
+  isMining = true;
+  miningCancelled = false;
+  runMiningLoop();
+}
+
+async function runMiningLoop() {
   const btn = document.getElementById('mineBtn');
   const termBody = document.getElementById('termBody');
   const progressWrap = document.getElementById('mineProgressWrap');
   const progressBar = document.getElementById('mineProgressBar');
 
-  btn.disabled = true;
-  btn.textContent = '⛏ Добыча...';
-  termBody.innerHTML = '';
-  mineTermLines = 0;
+  btn.textContent = '⏹ Остановить';
   progressWrap.style.display = 'block';
-  progressBar.style.width = '0%';
 
-  addTermLine('>> Инициализация майнера...');
-  await sleep(400);
+  addTermLine('>> Майнер запущен. Добыча до победного...');
+  addTermLine('');
 
-  const maxAttempts = 30 + Math.floor(Math.random() * 40);
-  let found = false;
+  let round = 0;
 
-  for (let i = 0; i < maxAttempts && !found; i++) {
-    const key = generateFakeKey();
-    const pct = ((i + 1) / maxAttempts) * 100;
-    progressBar.style.width = pct + '%';
+  while (!miningCancelled) {
+    round++;
+    const maxAttempts = 20 + Math.floor(Math.random() * 30);
+    let found = false;
 
-    if (i % 2 === 0) {
-      addTermLine(`Подбор: ${key}`, 'dim');
-    }
+    for (let i = 0; i < maxAttempts && !found && !miningCancelled; i++) {
+      const key = generateFakeKey();
+      const pct = ((i + 1) / maxAttempts) * 100;
+      progressBar.style.width = pct + '%';
 
-    if (i === maxAttempts - 1 || (i > 5 && Math.random() < 0.03)) {
-      // Actually check with server
-      try {
-        const res = await fetch('/api/mine/check', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: currentUser })
-        });
-        const data = await res.json();
-        if (data.success) {
-          addTermLine('');
-          addTermLine('========================================', 'success');
-          addTermLine(`>> КОД НАЙДЕН: ${data.key}`, 'success');
-          addTermLine('>> ФАУРИН ПОЛУЧЕН!', 'success');
-          addTermLine('========================================', 'success');
-          found = true;
-          fetchUsers();
-        } else {
-          addTermLine(`Неудача: ${key}`, 'fail');
+      addTermLine(`[раунд ${round}] Подбор: ${key}`, 'dim');
+
+      if (i === maxAttempts - 1 || (i > 3 && Math.random() < 0.04)) {
+        try {
+          const res = await fetch('/api/mine/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: currentUser })
+          });
+          const data = await res.json();
+          if (data.success) {
+            addTermLine('');
+            addTermLine('========================================', 'success');
+            addTermLine(`>> КОД НАЙДЕН: ${data.key}`, 'success');
+            addTermLine('>> ФАУРИН ПОЛУЧЕН!', 'success');
+            addTermLine('========================================', 'success');
+            found = true;
+            fetchUsers();
+          } else {
+            addTermLine(`Неудача`, 'fail');
+          }
+        } catch (e) {
+          addTermLine('Ошибка соединения', 'fail');
         }
-      } catch (e) {
-        addTermLine('Ошибка соединения', 'fail');
       }
+
+      await sleep(60 + Math.random() * 100);
     }
 
-    await sleep(80 + Math.random() * 120);
-  }
+    if (found) {
+      // Block found - stop mining
+      miningCancelled = true;
+      progressBar.style.width = '100%';
+      await sleep(300);
+      progressWrap.style.display = 'none';
+      btn.textContent = '⛏ Начать добычу';
+      isMining = false;
+      updateMiningUI();
+      return;
+    }
 
-  if (!found) {
+    // Not found this round - keep going
+    addTermLine(`>> Раунд ${round} завершён. Начинаем новый...`, 'dim');
     addTermLine('');
-    addTermLine('>> Блок не найден. Попробуй ещё раз.', 'fail');
+    await sleep(200);
   }
 
-  progressBar.style.width = '100%';
-  await sleep(500);
+  // User cancelled
+  addTermLine('');
+  addTermLine('>> Добыча остановлена.', 'fail');
+  await sleep(300);
   progressWrap.style.display = 'none';
-  btn.disabled = false;
   btn.textContent = '⛏ Начать добычу';
   isMining = false;
-
-  if (found) {
-    updateMiningUI();
-  }
 }
 
 function generateFakeKey() {

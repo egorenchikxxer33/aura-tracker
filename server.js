@@ -249,8 +249,9 @@ app.post('/api/background/trigger', (req, res) => {
   const { password, animation } = req.body;
   if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
   const name = animation || BG_ANIMATIONS[Math.floor(Math.random() * BG_ANIMATIONS.length)];
-  globalAnimation = { name, time: Date.now() };
-  setTimeout(() => { if (globalAnimation && globalAnimation.name === name && globalAnimation.time === Date.now()) globalAnimation = null; }, 8000);
+  const animTime = Date.now();
+  globalAnimation = { name, time: animTime };
+  setTimeout(() => { if (globalAnimation && globalAnimation.time === animTime) globalAnimation = null; }, 8000);
   res.json({ success: true, animation: name });
 });
 

@@ -3720,7 +3720,12 @@ function checkGlobalAnim(anim) {
 }
 
 // ===== MAINTENANCE MODE =====
+let maintenanceEnabled = false;
+
 function checkMaintenance(enabled) {
+  maintenanceEnabled = enabled;
+  const btn = document.getElementById('maintBtn');
+  if (btn) btn.textContent = enabled ? '🔧 Выключить техработы' : '🔧 Включить техработы';
   const overlay = document.getElementById('maintenanceOverlay');
   if (enabled && currentRole !== 'operator') {
     overlay.classList.add('active');
@@ -3755,7 +3760,7 @@ async function loginMaintenance() {
 
 async function toggleMaintenance() {
   const btn = document.getElementById('maintBtn');
-  const newState = !document.getElementById('maintenanceOverlay').classList.contains('active');
+  const newState = !maintenanceEnabled;
   try {
     const res = await fetch('/api/maintenance', {
       method: 'POST',
@@ -3764,8 +3769,9 @@ async function toggleMaintenance() {
     });
     const data = await res.json();
     if (data.success) {
-      btn.textContent = newState ? '🔧 Выключить техработы' : '🔧 Включить техработы';
-      showToast(newState ? 'Техработы включены' : 'Техработы отключены', newState ? 'bad' : 'good');
+      maintenanceEnabled = data.maintenance;
+      btn.textContent = data.maintenance ? '🔧 Выключить техработы' : '🔧 Включить техработы';
+      showToast(data.maintenance ? 'Техработы включены' : 'Техработы отключены', data.maintenance ? 'bad' : 'good');
     }
   } catch (e) {
     showToast('Ошибка', 'bad');

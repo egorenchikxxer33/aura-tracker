@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = '777';
 const DATA_FILE = path.join(__dirname, 'data.json');
 
+let maintenanceMode = false;
+let globalAnimation = null; // { name, time }
+
 const USER_NAMES = [
   'Егор Рейдик', 'Назар', 'Лука',
   'Илья Леонов', 'Илья Михайлов',
@@ -77,7 +80,7 @@ app.get('/api/users', (req, res) => {
   const sorted = Object.entries(data.users)
     .map(([name, info]) => ({ name, ...info }))
     .sort((a, b) => b.aura - a.aura);
-  res.json(sorted);
+  res.json({ users: sorted, maintenance: maintenanceMode, globalAnimation });
 });
 
 app.post('/api/login', (req, res) => {
@@ -226,6 +229,36 @@ app.post('/api/sell', (req, res) => {
   data.users[name].aura += reward;
   saveData();
   res.json({ success: true, reward, aura: data.users[name].aura, activated: data.users[name].faourines.activated });
+});
+
+app.post('/api/maintenance', (req, res) => {
+  const { password, enabled } = req.body;
+  if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
+  maintenanceMode = enabled;
+  res.json({ success: true, maintenance: maintenanceMode });
+});
+
+const BG_ANIMATIONS = [
+  'lightning','rainbow-sweep','starburst','aurora','glitch',
+  'shockwave','neon-pulse','vortex','matrix','prism',
+  'hologram','solar-flare','cascade','ripple','cosmic',
+  'chroma','spectrum','nebula','pulse-ring','quantum','supernova','plasma'
+];
+
+app.post('/api/background/trigger', (req, res) => {
+  const { password, animation } = req.body;
+  if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
+  const name = animation || BG_ANIMATIONS[Math.floor(Math.random() * BG_ANIMATIONS.length)];
+  globalAnimation = { name, time: Date.now() };
+  setTimeout(() => { if (globalAnimation && globalAnimation.name === name && globalAnimation.time === Date.now()) globalAnimation = null; }, 8000);
+  res.json({ success: true, animation: name });
+});
+
+app.post('/api/background/clear', (req, res) => {
+  const { password } = req.body;
+  if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
+  globalAnimation = null;
+  res.json({ success: true });
 });
 
 app.listen(PORT, '0.0.0.0', () => {

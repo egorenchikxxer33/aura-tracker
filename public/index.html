@@ -1384,6 +1384,496 @@ canvas#particles {
   transform: scale(1);
 }
 
+/* ===== BACKGROUND EFFECTS ===== */
+.bg-effect {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 190; pointer-events: none;
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.bg-effect.active { opacity: 1; transition: opacity 0.05s; }
+.bg-effect.playing { opacity: 1; }
+
+/* 1 — lightning */
+.bg-effect.anim-lightning { background: #fff; animation: bgLightning 0.5s ease forwards; }
+@keyframes bgLightning {
+  0% { opacity: 0; } 5% { opacity: 0.95; box-shadow: inset 0 0 150px #8af; }
+  15% { opacity: 0.2; } 25% { opacity: 0.7; } 40% { opacity: 0; } 100% { opacity: 0; }
+}
+
+/* 2 — rainbow sweep */
+.bg-effect.anim-rainbow-sweep {
+  background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  background-size: 300% 100%;
+  animation: bgRainbow 2s ease forwards;
+  mix-blend-mode: overlay;
+}
+@keyframes bgRainbow {
+  0% { background-position: 0% 50%; opacity: 0; }
+  15% { opacity: 0.45; } 85% { opacity: 0.45; }
+  100% { background-position: 300% 50%; opacity: 0; }
+}
+
+/* 3 — starburst */
+.bg-effect.anim-starburst {
+  background: conic-gradient(from 0deg, rgba(255,200,100,0.3), transparent 10deg, rgba(100,200,255,0.3) 20deg, transparent 30deg, rgba(255,100,200,0.3) 40deg, transparent 50deg, rgba(255,200,100,0.2) 60deg, transparent 70deg, rgba(100,200,255,0.2) 80deg, transparent 90deg);
+  animation: bgStarburst 2.5s ease forwards;
+}
+@keyframes bgStarburst {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  25% { opacity: 0.7; transform: scale(1.5) rotate(180deg); }
+  100% { opacity: 0; transform: scale(2.5) rotate(360deg); }
+}
+
+/* 4 — aurora */
+.bg-effect.anim-aurora {
+  background: radial-gradient(ellipse at 30% 50%, rgba(0,255,150,0.25), transparent 50%),
+              radial-gradient(ellipse at 70% 50%, rgba(0,150,255,0.25), transparent 50%);
+  animation: bgAurora 3s ease forwards;
+}
+@keyframes bgAurora {
+  0% { opacity: 0; filter: blur(20px); }
+  20% { opacity: 0.5; filter: blur(0px); }
+  50% { background-position: 0% 0%, 100% 0%; }
+  80% { opacity: 0.5; }
+  100% { opacity: 0; filter: blur(10px); }
+}
+
+/* 5 — glitch */
+.bg-effect.anim-glitch {
+  animation: bgGlitch 1s steps(1) forwards;
+  background: #0a0015;
+}
+.bg-effect.anim-glitch::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(0deg, transparent 48%, rgba(255,0,100,0.2) 48%, transparent 52%), linear-gradient(90deg, transparent 48%, rgba(0,200,255,0.2) 48%, transparent 52%);
+  background-size: 100% 8px, 8px 100%;
+  animation: bgGlitchOverlay 0.4s steps(4) 3;
+}
+@keyframes bgGlitch {
+  0% { opacity: 0; filter: hue-rotate(0deg); }
+  10% { opacity: 0.6; filter: hue-rotate(90deg); transform: translate(3px, 0); }
+  20% { transform: translate(-3px, 2px); }
+  30% { transform: translate(2px, -2px); }
+  40% { opacity: 0.3; filter: hue-rotate(180deg); transform: translate(-2px, 0); }
+  50% { opacity: 0.6; transform: translate(1px, -1px); }
+  65% { opacity: 0.2; }
+  100% { opacity: 0; }
+}
+@keyframes bgGlitchOverlay {
+  0% { opacity: 0.5; transform: translate(0, 0); }
+  25% { transform: translate(5px, -3px); }
+  50% { transform: translate(-4px, 2px); }
+  75% { transform: translate(3px, -1px); }
+  100% { transform: translate(-2px, 1px); opacity: 0; }
+}
+
+/* 6 — shockwave */
+.bg-effect.anim-shockwave {
+  background: transparent;
+}
+.bg-effect.anim-shockwave::before {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 20px; height: 20px;
+  border: 3px solid rgba(0,200,255,0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: bgShockwave 2s ease-out forwards;
+  box-shadow: 0 0 40px rgba(0,200,255,0.1);
+}
+.bg-effect.anim-shockwave::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  background: radial-gradient(circle, rgba(0,229,255,0.3), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: bgShockwave 2s ease-out 0.3s forwards;
+}
+@keyframes bgShockwave {
+  0% { width: 10px; height: 10px; opacity: 0.7; }
+  100% { width: 300vw; height: 300vw; opacity: 0; }
+}
+
+/* 7 — neon-pulse */
+.bg-effect.anim-neon-pulse {
+  animation: bgNeonPulse 2s ease forwards;
+}
+@keyframes bgNeonPulse {
+  0% { background: rgba(255,0,136,0); box-shadow: inset 0 0 0 rgba(255,0,136,0); }
+  15% { background: rgba(255,0,136,0.06); box-shadow: inset 0 0 100px rgba(255,0,136,0.1); }
+  30% { background: rgba(0,229,255,0.06); box-shadow: inset 0 0 100px rgba(0,229,255,0.1); }
+  45% { background: rgba(255,204,0,0.06); box-shadow: inset 0 0 100px rgba(255,204,0,0.1); }
+  60% { background: rgba(136,51,255,0.06); box-shadow: inset 0 0 100px rgba(136,51,255,0.1); }
+  75% { background: rgba(0,255,119,0.06); box-shadow: inset 0 0 100px rgba(0,255,119,0.1); }
+  100% { opacity: 0; }
+}
+
+/* 8 — vortex */
+.bg-effect.anim-vortex {
+  background: conic-gradient(from 0deg, rgba(0,229,255,0.15), rgba(255,0,136,0.15), rgba(255,204,0,0.15), rgba(136,51,255,0.15), rgba(0,229,255,0.15));
+  animation: bgVortex 3s ease forwards;
+}
+@keyframes bgVortex {
+  0% { transform: rotate(0deg) scale(0.3); opacity: 0; border-radius: 50%; }
+  30% { opacity: 0.5; transform: rotate(180deg) scale(1.2); border-radius: 0%; }
+  70% { opacity: 0.4; }
+  100% { transform: rotate(360deg) scale(0.5); opacity: 0; border-radius: 50%; }
+}
+
+/* 9 — matrix */
+.bg-effect.anim-matrix {
+  background: repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(0,255,100,0.03) 18px, rgba(0,255,100,0.03) 20px),
+              repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,255,100,0.03) 18px, rgba(0,255,100,0.03) 20px);
+  animation: bgMatrix 3s ease forwards;
+}
+.bg-effect.anim-matrix::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(0,255,100,0.04), transparent),
+              radial-gradient(circle at 80% 80%, rgba(0,255,100,0.03), transparent);
+  animation: bgMatrixGlow 2s ease-in-out infinite alternate;
+}
+@keyframes bgMatrix {
+  0% { opacity: 0; }
+  20% { opacity: 0.5; }
+  80% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+@keyframes bgMatrixGlow {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+/* 10 — prism */
+.bg-effect.anim-prism {
+  background: linear-gradient(135deg, rgba(255,0,0,0.08) 0%, rgba(255,255,0,0.08) 17%, rgba(0,255,0,0.08) 33%, rgba(0,255,255,0.08) 50%, rgba(0,0,255,0.08) 67%, rgba(255,0,255,0.08) 83%, rgba(255,0,0,0.08) 100%);
+  background-size: 200% 200%;
+  animation: bgPrism 2.5s ease forwards;
+  mix-blend-mode: screen;
+}
+@keyframes bgPrism {
+  0% { background-position: 0% 50%; opacity: 0; }
+  20% { opacity: 0.4; }
+  80% { opacity: 0.4; }
+  100% { background-position: 100% 100%; opacity: 0; }
+}
+
+/* 11 — hologram */
+.bg-effect.anim-hologram {
+  background: linear-gradient(135deg, rgba(0,229,255,0.04), rgba(255,0,136,0.04), rgba(0,229,255,0.04));
+  background-size: 400% 400%;
+  animation: bgHologram 2s ease forwards;
+}
+.bg-effect.anim-hologram::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.015) 3px, rgba(255,255,255,0.015) 4px);
+  animation: bgHoloScan 2s linear forwards;
+}
+@keyframes bgHologram {
+  0% { background-position: 0% 50%; opacity: 0; filter: blur(5px); }
+  20% { opacity: 0.4; filter: blur(0); }
+  50% { background-position: 100% 50%; }
+  80% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+@keyframes bgHoloScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* 12 — solar-flare */
+.bg-effect.anim-solar-flare {
+  background: radial-gradient(circle at var(--fx, 50%) var(--fy, 50%), rgba(255,200,50,0.3) 0%, rgba(255,100,0,0.15) 20%, rgba(255,50,0,0.05) 40%, transparent 60%);
+  animation: bgSolar 2.5s ease forwards;
+}
+@keyframes bgSolar {
+  0% { transform: scale(0); opacity: 0; }
+  20% { opacity: 0.6; transform: scale(1.5); }
+  60% { opacity: 0.5; }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+
+/* 13 — cascade */
+.bg-effect.anim-cascade {
+  background: linear-gradient(0deg, rgba(255,0,136,0.03), rgba(0,229,255,0.03), rgba(255,204,0,0.03), rgba(136,51,255,0.03), rgba(0,255,119,0.03), transparent);
+  background-size: 100% 600%;
+  animation: bgCascade 3s ease forwards;
+}
+@keyframes bgCascade {
+  0% { background-position: 0% 0%; opacity: 0; }
+  15% { opacity: 0.4; }
+  85% { opacity: 0.4; }
+  100% { background-position: 0% 100%; opacity: 0; }
+}
+
+/* 14 — ripple */
+.bg-effect.anim-ripple {
+  background: transparent;
+}
+.bg-effect.anim-ripple::before, .bg-effect.anim-ripple::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 2px solid rgba(0,229,255,0.2);
+  transform: translate(-50%, -50%);
+}
+.bg-effect.anim-ripple::before { animation: bgRipple 2.5s ease-out forwards; }
+.bg-effect.anim-ripple::after { animation: bgRipple 2.5s ease-out 0.4s forwards; border-color: rgba(255,0,136,0.15); }
+@keyframes bgRipple {
+  0% { width: 10px; height: 10px; opacity: 0.6; }
+  100% { width: 250vw; height: 250vw; opacity: 0; }
+}
+
+/* 15 — cosmic */
+.bg-effect.anim-cosmic {
+  background: radial-gradient(circle at 30% 40%, rgba(136,51,255,0.06), transparent 40%),
+              radial-gradient(circle at 70% 60%, rgba(0,229,255,0.06), transparent 40%),
+              radial-gradient(circle at 50% 80%, rgba(255,0,136,0.04), transparent 40%);
+  animation: bgCosmic 3s ease forwards;
+}
+@keyframes bgCosmic {
+  0% { opacity: 0; transform: scale(1.3); }
+  20% { opacity: 0.5; transform: scale(1); }
+  80% { opacity: 0.4; }
+  100% { opacity: 0; transform: scale(0.7); }
+}
+
+/* 16 — chroma */
+.bg-effect.anim-chroma {
+  animation: bgChroma 1s ease forwards;
+}
+@keyframes bgChroma {
+  0% { opacity: 0; }
+  10% { opacity: 0.5; box-shadow: inset 3px 0 0 rgba(255,0,0,0.3), inset -3px 0 0 rgba(0,0,255,0.3); }
+  20% { box-shadow: inset -3px 0 0 rgba(255,0,0,0.3), inset 3px 0 0 rgba(0,0,255,0.3); }
+  30% { opacity: 0.3; box-shadow: inset 6px 0 0 rgba(255,0,0,0.2), inset -6px 0 0 rgba(0,0,255,0.2); }
+  45% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* 17 — spectrum */
+.bg-effect.anim-spectrum {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,0,0,0.05) 10%, rgba(255,255,0,0.05) 25%, rgba(0,255,0,0.05) 40%, rgba(0,255,255,0.05) 55%, rgba(0,0,255,0.05) 70%, rgba(255,0,255,0.05) 85%, transparent 100%);
+  background-size: 200% 100%;
+  animation: bgSpectrum 2s ease forwards;
+  mix-blend-mode: screen;
+}
+@keyframes bgSpectrum {
+  0% { background-position: 0% 50%; opacity: 0; }
+  15% { opacity: 0.35; }
+  85% { opacity: 0.35; }
+  100% { background-position: 200% 50%; opacity: 0; }
+}
+
+/* 18 — nebula */
+.bg-effect.anim-nebula {
+  background: radial-gradient(ellipse at 25% 35%, rgba(136,51,255,0.08), transparent 50%),
+              radial-gradient(ellipse at 75% 25%, rgba(0,229,255,0.07), transparent 50%),
+              radial-gradient(ellipse at 50% 75%, rgba(255,0,136,0.06), transparent 50%),
+              radial-gradient(ellipse at 20% 70%, rgba(255,204,0,0.04), transparent 40%),
+              radial-gradient(ellipse at 80% 65%, rgba(0,255,119,0.04), transparent 40%);
+  animation: bgNebula 4s ease forwards;
+  filter: blur(2px);
+}
+@keyframes bgNebula {
+  0% { opacity: 0; }
+  20% { opacity: 0.4; filter: blur(2px); }
+  50% { filter: blur(0px); }
+  80% { opacity: 0.3; filter: blur(1px); }
+  100% { opacity: 0; filter: blur(4px); }
+}
+
+/* 19 — pulse-ring */
+.bg-effect.anim-pulse-ring {
+  background: transparent;
+}
+.bg-effect.anim-pulse-ring::before {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,229,255,0.25);
+  transform: translate(-50%, -50%);
+  animation: bgPulseRing 3s ease-out forwards;
+  box-shadow: 0 0 30px rgba(0,229,255,0.05);
+}
+.bg-effect.anim-pulse-ring::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,0,136,0.2);
+  transform: translate(-50%, -50%);
+  animation: bgPulseRing 3s ease-out 0.5s forwards;
+}
+@keyframes bgPulseRing {
+  0% { width: 20px; height: 20px; opacity: 0.6; }
+  20% { opacity: 0.4; }
+  100% { width: 300vw; height: 300vw; opacity: 0; }
+}
+
+/* 20 — quantum */
+.bg-effect.anim-quantum {
+  background-image:
+    radial-gradient(2px 2px at 10% 10%, rgba(0,229,255,0.3), transparent),
+    radial-gradient(2px 2px at 25% 45%, rgba(255,0,136,0.3), transparent),
+    radial-gradient(2px 2px at 55% 15%, rgba(255,204,0,0.3), transparent),
+    radial-gradient(2px 2px at 70% 70%, rgba(136,51,255,0.3), transparent),
+    radial-gradient(2px 2px at 85% 35%, rgba(0,255,119,0.3), transparent),
+    radial-gradient(2px 2px at 40% 80%, rgba(0,229,255,0.2), transparent),
+    radial-gradient(2px 2px at 15% 65%, rgba(255,0,136,0.2), transparent),
+    radial-gradient(2px 2px at 90% 85%, rgba(255,204,0,0.2), transparent);
+  background-size: 60px 60px;
+  animation: bgQuantum 3s ease forwards;
+}
+@keyframes bgQuantum {
+  0% { background-position: 0 0; opacity: 0; }
+  15% { opacity: 0.5; }
+  85% { opacity: 0.5; }
+  100% { background-position: 60px 60px; opacity: 0; }
+}
+
+/* 21 — supernova */
+.bg-effect.anim-supernova {
+  background: radial-gradient(circle at 50% 50%, rgba(255,200,100,0.25) 0%, rgba(255,100,50,0.1) 15%, rgba(255,50,0,0.05) 30%, transparent 50%);
+  animation: bgSupernova 2s ease forwards;
+}
+@keyframes bgSupernova {
+  0% { transform: scale(0); opacity: 0; filter: brightness(2); }
+  20% { opacity: 0.7; transform: scale(2); filter: brightness(1.5); }
+  40% { opacity: 0.3; filter: brightness(1); }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+/* 22 — plasma */
+.bg-effect.anim-plasma {
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(255,0,136,0.04), transparent 50%),
+    radial-gradient(ellipse at 70% 50%, rgba(0,229,255,0.04), transparent 50%),
+    radial-gradient(ellipse at 40% 70%, rgba(255,204,0,0.03), transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(136,51,255,0.03), transparent 50%);
+  background-size: 200% 200%;
+  animation: bgPlasma 3s ease forwards;
+  filter: blur(3px);
+}
+@keyframes bgPlasma {
+  0% { background-position: 0% 0%; opacity: 0; }
+  20% { opacity: 0.4; filter: blur(3px); }
+  50% { background-position: 100% 100%; filter: blur(1px); }
+  80% { opacity: 0.3; }
+  100% { background-position: 50% 50%; opacity: 0; filter: blur(6px); }
+}
+
+/* ===== MAINTENANCE OVERLAY ===== */
+.maintenance-overlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 9999;
+  background: rgba(5,0,10,0.92);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.maintenance-overlay.active {
+  opacity: 1; pointer-events: all;
+}
+.maintenance-box {
+  text-align: center;
+  max-width: 460px;
+  width: 90%;
+  padding: 60px 50px;
+}
+.maintenance-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: maintSpin 3s linear infinite;
+  display: inline-block;
+}
+@keyframes maintSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.maintenance-box h2 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--pink), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.maintenance-box p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+.maintenance-box .admin-login {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+/* ===== AURA FRAMES ===== */
+.lb-item.aura-rank-negative { border-color: rgba(255,0,50,0.2); background: rgba(255,0,50,0.03); }
+.lb-item.aura-rank-negative .lb-avatar { border-color: rgba(255,0,50,0.3) !important; box-shadow: 0 0 10px rgba(255,0,50,0.1); }
+.lb-item.aura-rank-negative .lb-rank { background: rgba(255,0,50,0.15); color: #ff3366; }
+
+.lb-item.aura-rank-bronze { border-color: rgba(205,127,50,0.15); }
+.lb-item.aura-rank-bronze .lb-avatar { border-color: rgba(205,127,50,0.2) !important; }
+
+.lb-item.aura-rank-silver { border-color: rgba(192,192,192,0.15); }
+.lb-item.aura-rank-silver .lb-avatar { border-color: rgba(192,192,192,0.25) !important; }
+
+.lb-item.aura-rank-gold {
+  border-color: rgba(255,215,0,0.2);
+  box-shadow: 0 0 10px rgba(255,215,0,0.05);
+}
+.lb-item.aura-rank-gold .lb-avatar {
+  border-color: rgba(255,215,0,0.35) !important;
+  box-shadow: 0 0 15px rgba(255,215,0,0.08);
+}
+
+.lb-item.aura-rank-platinum {
+  border-color: rgba(0,229,255,0.2);
+  box-shadow: 0 0 15px rgba(0,229,255,0.05), 0 0 0 1px rgba(0,229,255,0.05);
+}
+.lb-item.aura-rank-platinum .lb-avatar {
+  border-color: rgba(0,229,255,0.4) !important;
+  box-shadow: 0 0 20px rgba(0,229,255,0.1);
+}
+
+.lb-item.aura-rank-diamond {
+  border-color: rgba(255,0,136,0.2);
+  box-shadow: 0 0 20px rgba(255,0,136,0.05), 0 0 0 1px rgba(255,0,136,0.08);
+  background: linear-gradient(135deg, rgba(255,0,136,0.04), transparent);
+}
+.lb-item.aura-rank-diamond .lb-avatar {
+  border-color: rgba(255,0,136,0.5) !important;
+  box-shadow: 0 0 25px rgba(255,0,136,0.15), 0 0 0 2px rgba(255,0,136,0.08);
+}
+.lb-item.aura-rank-diamond .lb-name { color: var(--pink); }
+
+.lb-item.aura-rank-legendary {
+  border-color: var(--gold);
+  box-shadow: 0 0 30px rgba(255,215,0,0.08), 0 0 60px rgba(255,215,0,0.03), 0 0 0 1px rgba(255,215,0,0.15);
+  background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,215,0,0.01));
+  animation: legendaryGlow 3s ease-in-out infinite;
+}
+.lb-item.aura-rank-legendary .lb-avatar {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 0 60px rgba(255,215,0,0.1), 0 0 0 2px var(--gold);
+}
+.lb-item.aura-rank-legendary .lb-name { color: var(--gold); text-shadow: 0 0 20px rgba(255,215,0,0.2); }
+.lb-item.aura-rank-legendary .lb-aura { color: var(--gold) !important; text-shadow: 0 0 30px rgba(255,215,0,0.3) !important; }
+@keyframes legendaryGlow {
+  0%, 100% { box-shadow: 0 0 30px rgba(255,215,0,0.08), 0 0 0 1px rgba(255,215,0,0.15); }
+  50% { box-shadow: 0 0 50px rgba(255,215,0,0.15), 0 0 100px rgba(255,215,0,0.05), 0 0 0 1px rgba(255,215,0,0.25); }
+}
+
 /* ===== FAOURINE STATS ===== */
 .faourine-stats {
   display: flex;
@@ -1784,6 +2274,22 @@ canvas#particles {
   <img src="secret.jpg" alt="secret" id="secretImage">
 </div>
 
+<!-- ===== BG EFFECT OVERLAY ===== -->
+<div class="bg-effect" id="bgEffect"></div>
+
+<!-- ===== MAINTENANCE OVERLAY ===== -->
+<div class="maintenance-overlay" id="maintenanceOverlay">
+  <div class="maintenance-box glass">
+    <div class="maintenance-icon">⚙</div>
+    <h2>Технические работы</h2>
+    <p>Система временно недоступна.<br>Ведутся плановые работы.</p>
+    <div class="admin-login">
+      <input type="password" id="maintenancePass" placeholder="Пароль оператора" maxlength="10">
+      <button onclick="loginMaintenance()">ВОЙТИ</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen" class="screen">
   <div class="login-container glass">
@@ -1897,6 +2403,23 @@ canvas#particles {
           <select id="finesUserSelect" onchange="showFines()"></select>
           <div class="fines-list" id="finesList">
             <div style="color:rgba(240,230,255,0.3);font-size:13px;text-align:center;padding:20px 0;">Выберите пользователя</div>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <h4>Технические работы</h4>
+          <button class="admin-btn pink" id="maintBtn" onclick="toggleMaintenance()" style="width:100%;">🔧 Включить техработы</button>
+        </div>
+
+        <div class="admin-section">
+          <h4>Фоновые анимации</h4>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+            <button class="admin-btn cyan sm" onclick="triggerGlobalAnim('random')">✦ Случайная</button>
+            <button class="admin-btn outline sm" onclick="showAnimPicker()">🎨 Выбрать</button>
+            <button class="admin-btn danger sm" onclick="clearGlobalAnim()">✕ Сбросить</button>
+          </div>
+          <div id="animPicker" style="display:none;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;" id="animPickerGrid"></div>
           </div>
         </div>
       </div>
@@ -2205,7 +2728,8 @@ function populateSelects() {
 async function fetchUsers() {
   try {
     const res = await fetch('/api/users');
-    const data = await res.json();
+    const json = await res.json();
+    const data = Array.isArray(json) ? json : json.users;
     usersData = data;
     renderLeaderboard(data);
     if (currentRole === 'operator') {
@@ -2215,6 +2739,9 @@ async function fetchUsers() {
       updateMiningUI(data);
     }
     updateCurrentUserAura(data);
+    // Check state
+    if (json.maintenance !== undefined) checkMaintenance(json.maintenance);
+    if (json.globalAnimation) checkGlobalAnim(json.globalAnimation);
   } catch (e) {
     // silent
   }
@@ -2237,6 +2764,16 @@ function updateCurrentUserAura(data) {
 }
 
 // ===== LEADERBOARD =====
+function getAuraRank(aura) {
+  if (aura < 0) return 'negative';
+  if (aura < 50) return 'bronze';
+  if (aura < 149) return 'silver';
+  if (aura < 299) return 'gold';
+  if (aura < 499) return 'platinum';
+  if (aura < 999) return 'diamond';
+  return 'legendary';
+}
+
 function renderLeaderboard(data) {
   const list = document.getElementById('leaderboard');
   const maxAura = Math.max(...data.map(u => u.aura), 100);
@@ -2247,6 +2784,7 @@ function renderLeaderboard(data) {
     const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
     const itemClass = i === 0 ? 'top-1' : i === 1 ? 'top-2' : i === 2 ? 'top-3' : '';
     const auraClass = user.aura > 100 ? 'high' : user.aura >= 50 ? 'mid' : 'low';
+    const auraRank = 'aura-rank-' + getAuraRank(user.aura);
     const barPct = Math.max(5, (user.aura / maxAura) * 100);
 
     let changeText = '';
@@ -2256,7 +2794,7 @@ function renderLeaderboard(data) {
     }
 
     const item = document.createElement('div');
-    item.className = `lb-item ${itemClass}`;
+    item.className = `lb-item ${itemClass} ${auraRank}`;
     item.dataset.name = user.name;
     item.innerHTML = `
       <div class="lb-rank ${rankClass}">${i + 1}</div>
@@ -3141,6 +3679,141 @@ function spawnSellParticle(container, big = false) {
   `;
   container.appendChild(el);
   setTimeout(() => el.remove(), 1500);
+}
+
+// ===== BACKGROUND EFFECTS =====
+const BG_NAMES = [
+  'lightning','rainbow-sweep','starburst','aurora','glitch',
+  'shockwave','neon-pulse','vortex','matrix','prism',
+  'hologram','solar-flare','cascade','ripple','cosmic',
+  'chroma','spectrum','nebula','pulse-ring','quantum','supernova','plasma'
+];
+let lastGlobalAnim = null;
+
+function triggerBgEffect(name, x, y) {
+  const el = document.getElementById('bgEffect');
+  el.className = 'bg-effect';
+  void el.offsetWidth;
+  el.style.setProperty('--fx', (x || 50) + '%');
+  el.style.setProperty('--fy', (y || 50) + '%');
+  el.classList.add('active', 'anim-' + name);
+  const duration = { lightning:500, rainbow:2000, starburst:2500, aurora:3000, glitch:1000, shockwave:2000, neon:2000, vortex:3000, matrix:3000, prism:2500, hologram:2000, solar:2500, cascade:3000, ripple:2500, cosmic:3000, chroma:1000, spectrum:2000, nebula:4000, pulse:3000, quantum:3000, supernova:2000, plasma:3000 };
+  const d = duration[name.split('-')[0]] || 2000;
+  setTimeout(() => {
+    el.classList.remove('active', 'anim-' + name);
+  }, d + 100);
+}
+
+// Random background trigger
+let bgInterval = setInterval(() => {
+  if (Math.random() < 0.04) {
+    const name = BG_NAMES[Math.floor(Math.random() * BG_NAMES.length)];
+    triggerBgEffect(name);
+  }
+}, 25000);
+
+// Check for global animation from operator
+function checkGlobalAnim(anim) {
+  if (!anim || lastGlobalAnim && lastGlobalAnim.name === anim.name && lastGlobalAnim.time === anim.time) return;
+  lastGlobalAnim = anim;
+  triggerBgEffect(anim.name);
+}
+
+// ===== MAINTENANCE MODE =====
+function checkMaintenance(enabled) {
+  const overlay = document.getElementById('maintenanceOverlay');
+  if (enabled && currentRole !== 'operator') {
+    overlay.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
+  }
+}
+
+async function loginMaintenance() {
+  const pass = document.getElementById('maintenancePass').value;
+  if (!pass) { showToast('Введите пароль', 'bad'); return; }
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass })
+    });
+    const data = await res.json();
+    if (data.role === 'operator') {
+      document.getElementById('maintenanceOverlay').classList.remove('active');
+      document.getElementById('maintenancePass').value = '';
+      currentUser = 'Оператор';
+      currentRole = 'operator';
+      enterDashboard();
+    } else {
+      showToast('Неверный пароль', 'bad');
+    }
+  } catch (e) {
+    showToast('Ошибка', 'bad');
+  }
+}
+
+async function toggleMaintenance() {
+  const btn = document.getElementById('maintBtn');
+  const newState = !document.getElementById('maintenanceOverlay').classList.contains('active');
+  try {
+    const res = await fetch('/api/maintenance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', enabled: newState })
+    });
+    const data = await res.json();
+    if (data.success) {
+      btn.textContent = newState ? '🔧 Выключить техработы' : '🔧 Включить техработы';
+      showToast(newState ? 'Техработы включены' : 'Техработы отключены', newState ? 'bad' : 'good');
+    }
+  } catch (e) {
+    showToast('Ошибка', 'bad');
+  }
+}
+
+async function triggerGlobalAnim(type) {
+  try {
+    const res = await fetch('/api/background/trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', animation: type === 'random' ? undefined : type })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('✦ Анимация: ' + data.animation, 'good');
+    }
+  } catch (e) {
+    showToast('Ошибка', 'bad');
+  }
+}
+
+async function clearGlobalAnim() {
+  try {
+    await fetch('/api/background/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777' })
+    });
+    showToast('Анимации сброшены', 'good');
+  } catch (e) {}
+}
+
+function showAnimPicker() {
+  const picker = document.getElementById('animPicker');
+  const grid = document.getElementById('animPickerGrid');
+  if (picker.style.display !== 'none') { picker.style.display = 'none'; return; }
+  grid.innerHTML = '';
+  BG_NAMES.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'admin-btn outline sm';
+    btn.textContent = name;
+    btn.style.fontSize = '9px';
+    btn.style.padding = '4px 8px';
+    btn.onclick = () => triggerGlobalAnim(name);
+    grid.appendChild(btn);
+  });
+  picker.style.display = 'block';
 }
 
 // Override enterDashboard to show mining panel

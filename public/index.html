@@ -2251,230 +2251,223 @@ canvas#particles {
 /* ===== CARNEUS ===== */
 .carneus-overlay {
   position: fixed; top:0; left:0; width:100%; height:100%;
-  background: radial-gradient(ellipse at center, #0a0a2e 0%, #000010 100%);
+  background: radial-gradient(ellipse at center, #1a1a1a 0%, #000 100%);
   z-index: 10000; display:flex; align-items:center; justify-content:center;
   flex-direction:column; opacity:0; pointer-events:none;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.8s ease;
 }
 .carneus-overlay.active { opacity:1; pointer-events:all; }
 
 .carneus-container {
-  text-align:center; max-width:900px; width:100%; padding:20px;
-  position:relative;
+  text-align:center; max-width:960px; width:100%; padding:30px 20px;
+  position:relative; z-index:10002;
 }
 
 .carneus-title {
-  font-size:36px; font-weight:900; letter-spacing:6px;
-  background: linear-gradient(135deg, #00d4ff, #0066ff, #00d4ff);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  text-shadow: 0 0 40px rgba(0,100,255,0.3); margin-bottom:10px;
-  font-family: 'Segoe UI', sans-serif;
+  font-size:34px; font-weight:300; letter-spacing:12px;
+  color:#fff; text-shadow: 0 0 60px rgba(255,255,255,0.08);
+  margin-bottom:6px; font-family:'Segoe UI',sans-serif;
+  text-transform:uppercase;
 }
 .carneus-subtitle {
-  color: rgba(0,180,255,0.5); font-size:14px; letter-spacing:3px;
-  margin-bottom:30px; font-family: 'Courier New', monospace;
+  color:rgba(255,255,255,0.15); font-size:11px; letter-spacing:6px;
+  margin-bottom:40px; font-family:'Courier New',monospace;
+  text-transform:uppercase;
 }
 
-/* Stage 1: Insert Key */
-.carneus-key-slot {
-  width:300px; height:160px; margin:40px auto;
-  border:2px dashed rgba(0,150,255,0.3); border-radius:16px;
-  display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:12px;
-  background: rgba(0,50,150,0.05); position:relative;
-  transition: all 0.3s;
+.carneus-divider {
+  width:60px; height:1px; margin:20px auto;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
 }
-.carneus-key-slot .key-icon { font-size:48px; opacity:0.3; }
-.carneus-key-slot .key-label { color:rgba(0,180,255,0.4); font-size:13px; letter-spacing:2px; }
-.carneus-key-count {
-  color: rgba(0,180,255,0.6); font-size:14px; margin-bottom:20px;
+
+.carneus-key-area {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  margin:30px 0;
+}
+.carneus-key-icon { font-size:60px; opacity:0.2; filter:grayscale(1); transition:all 0.5s; }
+.carneus-key-icon.has-key { opacity:0.5; filter:grayscale(0); }
+.carneus-key-label { color:rgba(255,255,255,0.2); font-size:12px; letter-spacing:4px; text-transform:uppercase; }
+.carneus-key-slot {
+  width:280px; height:44px; margin:10px auto;
+  border:1px solid rgba(255,255,255,0.08); display:flex;
+  align-items:center; justify-content:center;
+  background:rgba(255,255,255,0.02);
+  font-size:12px; letter-spacing:3px; color:rgba(255,255,255,0.15);
 }
 
 .carneus-btn {
-  padding:12px 40px; border:none; border-radius:8px;
-  font-size:16px; font-weight:700; letter-spacing:2px;
-  cursor:pointer; transition: all 0.3s;
-  background: linear-gradient(135deg, #0044ff, #0088ff);
-  color:white; box-shadow: 0 0 30px rgba(0,100,255,0.3);
+  padding:10px 36px; border:none; border-radius:2px;
+  font-size:12px; font-weight:600; letter-spacing:3px;
+  cursor:pointer; transition:all 0.3s;
+  background:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.1);
+  text-transform:uppercase;
 }
-.carneus-btn:hover { transform:scale(1.05); box-shadow:0 0 50px rgba(0,100,255,0.5); }
-.carneus-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
-.carneus-btn.outline {
-  background:transparent; border:1px solid rgba(0,150,255,0.4); color:rgba(0,180,255,0.8);
-  box-shadow:none;
-}
-.carneus-btn.outline:hover { background:rgba(0,100,255,0.1); }
+.carneus-btn:hover { background:rgba(255,255,255,0.12); color:#fff; border-color:rgba(255,255,255,0.2); }
+.carneus-btn:disabled { opacity:0.15; cursor:not-allowed; transform:none !important; }
+.carneus-btn.primary { background:#fff; color:#000; border-color:#fff; }
+.carneus-btn.primary:hover { background:rgba(255,255,255,0.85); box-shadow:0 0 40px rgba(255,255,255,0.1); }
+.carneus-btn.primary:disabled { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.06); }
 
-/* Stage 2: Card Pick */
 .carneus-cards {
-  display:flex; gap:20px; justify-content:center; flex-wrap:wrap;
-  margin:30px 0; perspective: 1000px;
+  display:flex; gap:24px; justify-content:center; flex-wrap:wrap;
+  margin:30px 0; perspective:1200px;
 }
 .carneus-card {
-  width:220px; height:300px; border-radius:16px; cursor:pointer;
-  position:relative; overflow:hidden; transition: all 0.5s ease;
-  transform-style: preserve-3d;
-  border: 2px solid rgba(0,100,255,0.3);
-  box-shadow: 0 0 30px rgba(0,50,200,0.2);
-  background: linear-gradient(145deg, #0a0a3e, #050520);
+  width:220px; height:310px; cursor:pointer;
+  position:relative; overflow:hidden;
+  transition:all 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+  background:#0a0a0a; border:1px solid rgba(255,255,255,0.06);
 }
-.carneus-card:hover {
-  transform: translateY(-15px) scale(1.03);
-  border-color: rgba(0,180,255,0.6);
-  box-shadow: 0 20px 60px rgba(0,100,255,0.4);
+.carneus-card:hover { transform:translateY(-12px); border-color:rgba(255,255,255,0.2); box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.carneus-card img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(0.5) contrast(1.1); transition:filter 0.4s; }
+.carneus-card:hover img { filter:grayscale(0) contrast(1); }
+
+.carneus-card .card-badge {
+  position:absolute; top:10px; right:10px;
+  padding:2px 8px; font-size:7px; letter-spacing:2px;
+  background:rgba(0,0,0,0.6); color:rgba(255,255,255,0.3);
+  border:1px solid rgba(255,255,255,0.06);
+  text-transform:uppercase;
 }
-.carneus-card img {
-  width:100%; height:100%; object-fit:cover;
-  display:block; transition: opacity 0.3s;
-}
+.rarity-common .card-badge { color:#555; border-color:#222; }
+.rarity-uncommon .card-badge { color:#8bc34a; border-color:rgba(139,195,74,0.15); }
+.rarity-rare .card-badge { color:#64b5f6; border-color:rgba(100,181,246,0.15); }
+.rarity-epic .card-badge { color:#ce93d8; border-color:rgba(206,147,216,0.15); }
+.rarity-legendary .card-badge { color:#ffd54f; border-color:rgba(255,213,79,0.2); }
+
 .carneus-card .card-overlay {
   position:absolute; bottom:0; left:0; right:0;
-  padding:12px; background: linear-gradient(transparent, rgba(0,0,20,0.95));
+  padding:14px 12px;
+  background:linear-gradient(transparent, rgba(0,0,0,0.9) 40%);
   text-align:center;
 }
-.carneus-card .card-name { font-size:13px; font-weight:700; color:white; margin-bottom:2px; }
-.carneus-card .card-rarity { font-size:11px; letter-spacing:2px; text-transform:uppercase; }
-.rarity-common .card-rarity { color: #888; }
-.rarity-uncommon .card-rarity { color: #4caf50; }
-.rarity-rare .card-rarity { color: #2196f3; }
-.rarity-epic .card-rarity { color: #9c27b0; }
-.rarity-legendary .card-rarity { color: #ffd700; text-shadow:0 0 20px rgba(255,215,0,0.5); }
+.carneus-card .card-name { font-size:12px; font-weight:400; color:#fff; letter-spacing:1px; margin-bottom:2px; }
+.carneus-card .card-sub { font-size:9px; letter-spacing:3px; text-transform:uppercase; }
+.rarity-common .card-sub { color:#444; }
+.rarity-uncommon .card-sub { color:#8bc34a; }
+.rarity-rare .card-sub { color:#64b5f6; }
+.rarity-epic .card-sub { color:#ce93d8; }
+.rarity-legendary .card-sub { color:#ffd54f; }
 
-.rarity-common { border-color:rgba(136,136,136,0.4) !important; }
-.rarity-uncommon { border-color:rgba(76,175,80,0.4) !important; }
-.rarity-rare { border-color:rgba(33,150,243,0.5) !important; }
-.rarity-epic { border-color:rgba(156,39,176,0.5) !important; }
-.rarity-legendary {
-  border-color:rgba(255,215,0,0.6) !important;
-  box-shadow: 0 0 40px rgba(255,215,0,0.2), 0 0 80px rgba(255,215,0,0.1) !important;
-}
+.rarity-common { border-color:rgba(255,255,255,0.04) !important; }
+.rarity-uncommon { border-left:2px solid rgba(139,195,74,0.25) !important; }
+.rarity-rare { border-left:2px solid rgba(100,181,246,0.25) !important; }
+.rarity-epic { border-left:2px solid rgba(206,147,216,0.25) !important; }
+.rarity-legendary { border-left:2px solid rgba(255,213,79,0.35) !important; }
 
-/* Burn animation */
 .carneus-card.burning {
-  animation: blackBurn 0.8s ease forwards;
+  animation: cBurn 0.9s ease forwards;
   pointer-events:none;
 }
-@keyframes blackBurn {
+@keyframes cBurn {
   0% { filter:brightness(1); transform:scale(1); opacity:1; }
-  30% { filter:brightness(0.3) saturate(0); transform:scale(1.05); }
-  60% { filter:brightness(0) saturate(0); transform:scale(0.9); opacity:0.7; }
-  100% { filter:brightness(0); transform:scale(0.5) rotateY(90deg); opacity:0; }
+  20% { filter:brightness(1.5) contrast(2); }
+  40% { filter:brightness(0.15) saturate(0); transform:scale(0.95); }
+  70% { filter:brightness(0); transform:scale(0.8); opacity:0.4; }
+  100% { filter:brightness(0); transform:scale(0.25) rotate(5deg); opacity:0; }
 }
 .carneus-card.burning::before {
-  content:''; position:absolute; inset:0;
-  background: radial-gradient(circle at center, #000 0%, transparent 70%);
-  animation: burnGlow 0.8s ease forwards;
-  z-index:2; pointer-events:none;
+  content:''; position:absolute; inset:0; z-index:3;
+  mix-blend-mode:screen; pointer-events:none;
+  animation:cBurnGlow 0.9s ease forwards;
 }
-@keyframes burnGlow {
-  0% { opacity:0; }
-  20% { opacity:1; background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 0%, rgba(0,50,200,0.3) 50%, transparent 70%); }
-  50% { opacity:1; background: radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,50,0.4) 60%, transparent 80%); }
-  100% { opacity:1; background:#000; }
+@keyframes cBurnGlow {
+  0% { opacity:0; background:radial-gradient(circle at 50% 80%, transparent, transparent); }
+  15% { opacity:1; background:radial-gradient(circle at 50% 80%, rgba(255,255,255,0.5) 0%, transparent 50%); }
+  50% { opacity:0.6; background:radial-gradient(circle at 50% 80%, rgba(100,100,100,0.2) 0%, transparent 60%); }
+  100% { opacity:0; background:radial-gradient(circle at 50% 80%, #000 0%, transparent 70%); }
 }
 
 .carneus-card.chosen {
-  animation: cardReveal 0.6s ease forwards;
-  z-index:10;
+  animation:cReveal 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards; z-index:10;
 }
-@keyframes cardReveal {
+@keyframes cReveal {
   0% { transform:translateY(0) scale(1); }
-  50% { transform:translateY(-30px) scale(1.1); box-shadow: 0 30px 80px rgba(0,100,255,0.6); }
+  40% { transform:translateY(-18px) scale(1.05); box-shadow:0 30px 80px rgba(255,255,255,0.06); }
   100% { transform:translateY(0) scale(1); }
 }
 
-.carneus-pick-hint {
-  color: rgba(0,180,255,0.4); font-size:13px; letter-spacing:2px;
-  margin-bottom:10px;
-}
+.carneus-pick-hint { color:rgba(255,255,255,0.12); font-size:11px; letter-spacing:3px; text-transform:uppercase; }
 
-/* Stage 3: Result */
-.carneus-result {
-  text-align:center; padding:40px;
+.carneus-result-piece { display:inline-block; position:relative; margin:20px auto; }
+.carneus-result-piece .big-img-wrap {
+  width:260px; height:340px; overflow:hidden;
+  border:1px solid rgba(255,255,255,0.08); position:relative; background:#0a0a0a;
 }
-.carneus-result .big-item {
-  display:inline-block;
-  width:300px; height:380px; border-radius:20px; overflow:hidden;
-  border: 3px solid rgba(255,215,0,0.5);
-  box-shadow: 0 0 60px rgba(255,215,0,0.2);
-  position:relative;
-}
-.carneus-result .big-item img { width:100%; height:100%; object-fit:cover; }
-.carneus-result .big-item .card-overlay {
+.carneus-result-piece .big-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(0.2); }
+.carneus-result-piece .big-img-wrap .card-overlay {
   position:absolute; bottom:0; left:0; right:0;
-  padding:16px; background: linear-gradient(transparent, rgba(0,0,20,0.95));
+  padding:14px; background:linear-gradient(transparent, rgba(0,0,0,0.9) 40%);
   text-align:center;
 }
-.carneus-result .big-item .card-name { font-size:18px; font-weight:700; color:white; }
-.carneus-result .big-item .card-rarity { font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-top:4px; }
-.carneus-result .get-label {
-  font-size:12px; color:rgba(0,180,255,0.5); letter-spacing:3px;
-  margin-bottom:8px;
-}
-.carneus-result .rarity-name {
-  font-size:11px; letter-spacing:4px; text-transform:uppercase;
-  color: rgba(0,180,255,0.3); margin-top:20px;
-}
+.carneus-result-piece .big-img-wrap .card-name { font-size:14px; color:#fff; letter-spacing:2px; font-weight:300; }
+.carneus-result-piece .big-img-wrap .card-sub { font-size:9px; letter-spacing:4px; text-transform:uppercase; margin-top:4px; }
+.carneus-result-piece .rarity-line { width:30px; height:1px; margin:14px auto 6px; }
+.rarity-common .rarity-line { background:rgba(255,255,255,0.06); }
+.rarity-uncommon .rarity-line { background:#8bc34a; }
+.rarity-rare .rarity-line { background:#64b5f6; }
+.rarity-epic .rarity-line { background:#ce93d8; }
+.rarity-legendary .rarity-line { background:#ffd54f; box-shadow:0 0 12px rgba(255,213,79,0.2); }
+.carneus-result-piece .rarity-tag { font-size:9px; letter-spacing:5px; text-transform:uppercase; margin-top:6px; }
+.rarity-common .rarity-tag { color:#333; }
+.rarity-uncommon .rarity-tag { color:#8bc34a; }
+.rarity-rare .rarity-tag { color:#64b5f6; }
+.rarity-epic .rarity-tag { color:#ce93d8; }
+.rarity-legendary .rarity-tag { color:#ffd54f; }
 
-.carneus-particles {
-  position:fixed; inset:0; pointer-events:none; z-index:10001;
-  overflow:hidden;
-}
 .carneus-particle {
-  position:absolute; width:4px; height:4px; border-radius:50%;
-  background: #0066ff; animation: carParticleFall linear forwards;
+  position:fixed; pointer-events:none; z-index:10003;
+  width:2px; height:2px; background:#fff; opacity:0;
+  animation:cPart linear forwards;
 }
-@keyframes carParticleFall {
-  0% { transform:translateY(-10vh) rotate(0deg); opacity:1; }
-  100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+@keyframes cPart {
+  0% { opacity:0.5; }
+  100% { opacity:0; }
 }
 
 /* ===== INVENTORY ===== */
 .inv-panel { margin-top:12px; }
 .inv-grid {
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr));
-  gap:8px; margin:10px 0; max-height:400px; overflow-y:auto;
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(85px,1fr));
+  gap:5px; margin:10px 0; max-height:350px; overflow-y:auto;
 }
 .inv-item {
-  border-radius:10px; overflow:hidden; cursor:pointer;
-  border:2px solid rgba(255,255,255,0.08); transition:all 0.3s;
-  position:relative; aspect-ratio:3/4;
+  overflow:hidden; cursor:default;
+  border:1px solid rgba(255,255,255,0.05); transition:all 0.2s;
+  position:relative; aspect-ratio:3/4; background:#0a0a0a;
 }
-.inv-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.inv-item img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(0.35); }
 .inv-item .inv-label {
   position:absolute; bottom:0; left:0; right:0;
-  padding:6px 4px; background:linear-gradient(transparent,rgba(0,0,20,0.9));
-  font-size:9px; text-align:center; color:white;
-  line-height:1.2;
+  padding:4px; background:linear-gradient(transparent, rgba(0,0,0,0.85) 30%);
+  font-size:8px; text-align:center; color:rgba(255,255,255,0.6);
+  line-height:1.2; letter-spacing:0.5px;
 }
-.inv-item:hover { transform:scale(1.05); border-color:rgba(0,180,255,0.3); }
-.inv-count { font-size:12px; color:rgba(0,180,255,0.3); margin-bottom:6px; }
+.inv-item:hover { border-color:rgba(255,255,255,0.12); }
+.inv-item:hover img { filter:grayscale(0); }
 
 .inv-craft-section {
-  background: rgba(0,50,150,0.1); border-radius:12px;
-  padding:16px; margin-top:12px; border:1px solid rgba(0,100,255,0.15);
-  text-align:center;
+  border:1px solid rgba(255,255,255,0.05);
+  padding:14px; margin-top:12px; text-align:center;
 }
-.inv-craft-label { font-size:12px; color:rgba(0,180,255,0.4); margin-bottom:8px; letter-spacing:1px; }
+.inv-craft-label { font-size:10px; color:rgba(255,255,255,0.2); margin-bottom:12px; letter-spacing:2px; text-transform:uppercase; }
+.inv-craft-quality { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:10px; }
+.inv-craft-quality .q-label { font-size:9px; color:rgba(255,255,255,0.15); letter-spacing:2px; text-transform:uppercase; }
+.inv-craft-quality .q-bar { display:flex; gap:3px; }
+.inv-craft-quality .q-dot { width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,0.08); cursor:pointer; transition:all 0.3s; background:transparent; }
+.inv-craft-quality .q-dot.active { background:rgba(255,255,255,0.7); border-color:rgba(255,255,255,0.3); }
+.inv-craft-quality .q-dot:hover { border-color:rgba(255,255,255,0.2); }
+.inv-craft-info { font-size:9px; color:rgba(255,255,255,0.1); letter-spacing:1px; margin-bottom:10px; }
 
 /* ===== ADMIN INVENTORY ===== */
-.admin-inv-grid {
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(70px,1fr));
-  gap:6px; margin:8px 0; max-height:300px; overflow-y:auto;
-}
-.admin-inv-item {
-  border-radius:8px; overflow:hidden; cursor:pointer; position:relative;
-  border:2px solid rgba(255,255,255,0.08); aspect-ratio:3/4;
-}
-.admin-inv-item img { width:100%; height:100%; object-fit:cover; display:block; }
-.admin-inv-item .inv-del {
-  position:absolute; top:2px; right:2px; width:18px; height:18px;
-  background:rgba(255,0,0,0.7); border:none; border-radius:50%;
-  color:white; font-size:10px; cursor:pointer; line-height:18px; text-align:center;
-  opacity:0; transition:opacity 0.2s;
-}
+.admin-inv-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(55px,1fr)); gap:4px; margin:8px 0; max-height:260px; overflow-y:auto; }
+.admin-inv-item { overflow:hidden; cursor:pointer; position:relative; border:1px solid rgba(255,255,255,0.05); aspect-ratio:3/4; background:#0a0a0a; }
+.admin-inv-item img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(0.35); }
+.admin-inv-item .inv-del { position:absolute; top:1px; right:1px; width:14px; height:14px; background:rgba(255,255,255,0.1); border:none; border-radius:50%; color:rgba(255,255,255,0.4); font-size:7px; cursor:pointer; line-height:14px; text-align:center; opacity:0; transition:opacity 0.15s; }
 .admin-inv-item:hover .inv-del { opacity:1; }
-.admin-inv-empty { color:rgba(240,230,255,0.2); font-size:13px; text-align:center; padding:20px 0; }
+.admin-inv-empty { color:rgba(255,255,255,0.08); font-size:11px; text-align:center; padding:20px 0; letter-spacing:2px; }
 </style>
 </head>
 <body>
@@ -2612,14 +2605,18 @@ canvas#particles {
         <div class="admin-section inv-panel">
           <h4>🎒 Инвентарь</h4>
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
-            <span style="color:rgba(0,180,255,0.5);font-size:12px;">🗝 Ключи:</span>
-            <span style="color:#00d4ff;font-size:16px;font-weight:700;" id="userKeysCount">0</span>
+            <span style="color:rgba(255,255,255,0.3);font-size:11px;letter-spacing:1px;">Ключи:</span>
+            <span style="color:#fff;font-size:15px;font-weight:400;" id="userKeysCount">0</span>
           </div>
           <div class="inv-grid" id="userInventory"></div>
           <div class="inv-craft-section">
-            <div class="inv-craft-label">Скрафтить ключ Карнеуса из 5 ◆ фауринов</div>
-            <button class="carneus-btn outline" id="craftKeyBtn" onclick="craftCarneusKey()">⚒ Скрафтить</button>
-            <div style="font-size:11px;color:rgba(0,180,255,0.25);margin-top:6px;">◆ Активированных: <span id="craftFaourineCount">0</span></div>
+            <div class="inv-craft-label">Создать ключ Карнеуса</div>
+            <div class="inv-craft-quality">
+              <span class="q-label">Качество</span>
+              <div class="q-bar" id="qualityBar"></div>
+            </div>
+            <div class="inv-craft-info" id="craftInfo">◆ 0 ◆ активированных · ◇ 5 ◇ неактивированных</div>
+            <button class="carneus-btn" id="craftKeyBtn" onclick="craftCarneusKey()" style="font-size:11px;">⚒ Создать ключ</button>
           </div>
         </div>
       </div>
@@ -2730,37 +2727,38 @@ canvas#particles {
 
 <!-- ===== CARNEUS OVERLAY ===== -->
 <div class="carneus-overlay" id="carneusOverlay">
-  <div class="carneus-particles" id="carneusParticles"></div>
+  <div class="carneus-vignette"></div>
+  <div id="carneusParticles"></div>
   <div class="carneus-container">
-    <!-- Stage 1: Insert Key -->
     <div id="carneusStage1">
-      <div class="carneus-title">🗝 КАРНЕУС</div>
-      <div class="carneus-subtitle">— ДРЕВНИЙ СУНДУК —</div>
-      <div class="carneus-key-slot">
-        <div class="key-icon">🗝</div>
-        <div class="key-label">ВСТАВЬТЕ КЛЮЧ ДЛЯ ОТКРЫТИЯ</div>
+      <div class="carneus-title">К<span>А</span>РНЕУС</div>
+      <div class="carneus-divider"></div>
+      <div class="carneus-subtitle">— Древний механизм —</div>
+      <div class="carneus-key-area">
+        <div class="carneus-key-icon" id="carneusKeyIcon">🗝</div>
+        <div class="carneus-key-label">Вставьте ключ для открытия</div>
+        <div class="carneus-key-slot">Ключей: <span id="carneusKeyCount">0</span></div>
       </div>
-      <div class="carneus-key-count">У вас ключей: <span id="carneusKeyCount">0</span></div>
-      <button class="carneus-btn" id="openCarneusBtn" onclick="startCarneusOpen()">🔓 Открыть Карнеус</button>
+      <button class="carneus-btn primary" id="openCarneusBtn" onclick="startCarneusOpen()">Открыть Карнеус</button>
       <br><br>
-      <button class="carneus-btn outline" onclick="closeCarneusPage()">✕ Закрыть</button>
+      <button class="carneus-btn" onclick="closeCarneusPage()">✕ Закрыть</button>
     </div>
 
-    <!-- Stage 2: Pick a Card -->
     <div id="carneusStage2" style="display:none;">
-      <div class="carneus-title">🎴 ВЫБЕРИТЕ ДОБЫЧУ</div>
-      <div class="carneus-subtitle">— ТРИ СУДЬБЫ, ОДИН ВЫБОР —</div>
-      <div class="carneus-pick-hint">Нажмите на карту, чтобы забрать. Остальные сгорят.</div>
+      <div class="carneus-title">В<span>Ы</span>БЕРИ</div>
+      <div class="carneus-divider"></div>
+      <div class="carneus-subtitle">— Три судьбы, один выбор —</div>
+      <div class="carneus-pick-hint">Выбери карту. Остальные сгорят.</div>
       <div class="carneus-cards" id="carneusCards"></div>
     </div>
 
-    <!-- Stage 3: Result -->
     <div id="carneusStage3" style="display:none;">
-      <div class="carneus-title">✨ ДОБЫЧА ПОЛУЧЕНА</div>
-      <div class="carneus-subtitle">— ПРЕДМЕТ ДОБАВЛЕН В ИНВЕНТАРЬ —</div>
-      <div class="carneus-result" id="carneusResultContent"></div>
+      <div class="carneus-title">Т<span>В</span>ОЁ</div>
+      <div class="carneus-divider"></div>
+      <div class="carneus-subtitle">— Предмет добавлен в инвентарь —</div>
+      <div class="carneus-result-piece" id="carneusResultContent"></div>
       <br>
-      <button class="carneus-btn outline" onclick="closeCarneusPage()">✕ Закрыть</button>
+      <button class="carneus-btn" onclick="closeCarneusPage()">✕ Закрыть</button>
     </div>
   </div>
 </div>
@@ -3586,6 +3584,40 @@ function showMiningPanel(userData) {
   }
 }
 
+let craftQuality = 5;
+let craftQualityInited = false;
+
+function initCraftQuality() {
+  if (craftQualityInited) return;
+  craftQualityInited = true;
+  const bar = document.getElementById('qualityBar');
+  for (let i = 0; i <= 5; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot' + (i === 5 ? ' active' : '');
+    dot.dataset.val = i;
+    dot.onclick = () => { craftQuality = i; updateCraftQualityUI(); };
+    bar.appendChild(dot);
+  }
+}
+
+function updateCraftQualityUI() {
+  const user = usersData.find(u => u.name === currentUser);
+  if (!user) return;
+  const fa = user.faourines || { unactivated: 0, activated: 0 };
+  const dots = document.querySelectorAll('#qualityBar .q-dot');
+  dots.forEach((d, i) => {
+    d.classList.toggle('active', i <= craftQuality);
+  });
+  const act = Math.min(craftQuality, fa.activated);
+  const unact = 5 - act;
+  const canCraft = act <= fa.activated && unact <= fa.unactivated;
+  document.getElementById('craftInfo').textContent = '◆ ' + act + ' активированных · ◇ ' + unact + ' неактивированных';
+  document.getElementById('craftKeyBtn').disabled = !canCraft;
+
+  const qualityLabels = ['Тусклый', 'Слабый', 'Обычный', 'Чистый', 'Сияющий', 'Идеальный'];
+  const chances = ['⬜⬜⬜⬜⬜', '⬜⬜⬜⬜⬛', '⬛⬜⬜⬜⬛', '⬛⬛⬜⬛⬛', '⬛⬛⬛⬛⬛', '⬛⬛⬛⬛⬛'];
+}
+
 function updateMiningUI(data) {
   const user = data ? data.find(u => u.name === currentUser) : usersData.find(u => u.name === currentUser);
   if (!user) return;
@@ -3611,8 +3643,8 @@ function updateMiningUI(data) {
   // Carneus / inventory
   const keys = user.keys || 0;
   document.getElementById('userKeysCount').textContent = keys;
-  document.getElementById('craftFaourineCount').textContent = fa.activated;
-  document.getElementById('craftKeyBtn').disabled = fa.activated < 5;
+  initCraftQuality();
+  updateCraftQualityUI();
   renderUserInventory(user.inventory || []);
 }
 
@@ -4140,8 +4172,10 @@ function openCarneusPage() {
   document.getElementById('carneusStage2').style.display = 'none';
   document.getElementById('carneusStage3').style.display = 'none';
   const user = usersData.find(u => u.name === currentUser);
-  document.getElementById('carneusKeyCount').textContent = (user && user.keys) || 0;
-  document.getElementById('openCarneusBtn').disabled = !(user && user.keys > 0);
+  const kc = (user && user.keys) || 0;
+  document.getElementById('carneusKeyCount').textContent = kc;
+  document.getElementById('openCarneusBtn').disabled = kc < 1;
+  document.getElementById('carneusKeyIcon').classList.toggle('has-key', kc > 0);
   spawnCarneusParticles();
 }
 
@@ -4153,7 +4187,7 @@ function closeCarneusPage() {
 async function startCarneusOpen() {
   const btn = document.getElementById('openCarneusBtn');
   btn.disabled = true;
-  btn.textContent = '⏳ Открытие...';
+  btn.textContent = '⏳';
   try {
     const res = await fetch('/api/carneus/open', {
       method: 'POST',
@@ -4177,7 +4211,7 @@ async function startCarneusOpen() {
     showToast('Ошибка соединения', 'bad');
   }
   btn.disabled = false;
-  btn.textContent = '🔓 Открыть Карнеус';
+  btn.textContent = 'Открыть Карнеус';
 }
 
 function renderCarneusCards(items) {
@@ -4189,9 +4223,10 @@ function renderCarneusCards(items) {
     card.dataset.idx = idx;
     card.innerHTML = `
       <img src="${item.file}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="card-badge">${getRarityLabel(item.rarity)}</div>
       <div class="card-overlay">
         <div class="card-name">${item.name}</div>
-        <div class="card-rarity">${getRarityLabel(item.rarity)}</div>
+        <div class="card-sub">${getRarityLabel(item.rarity)}</div>
       </div>
     `;
     card.onclick = () => pickCarneusCard(idx);
@@ -4207,9 +4242,7 @@ function getRarityLabel(rarity) {
 async function pickCarneusCard(choice) {
   const cards = document.querySelectorAll('.carneus-card');
   cards.forEach((c, i) => {
-    if (i !== choice) {
-      c.classList.add('burning');
-    }
+    if (i !== choice) c.classList.add('burning');
   });
   const chosen = cards[choice];
   chosen.classList.add('chosen');
@@ -4222,19 +4255,19 @@ async function pickCarneusCard(choice) {
     });
     const data = await res.json();
     if (data.success) {
-      await sleep(800);
+      await sleep(900);
       document.getElementById('carneusStage2').style.display = 'none';
       document.getElementById('carneusStage3').style.display = 'block';
       document.getElementById('carneusResultContent').innerHTML = `
-        <div class="get-label">★ ВАМ ВЫПАЛО ★</div>
-        <div class="big-item rarity-${data.item.rarity}">
+        <div class="big-img-wrap rarity-${data.item.rarity}">
           <img src="${data.item.file}" alt="${data.item.name}" onerror="this.style.display='none'">
           <div class="card-overlay">
             <div class="card-name">${data.item.name}</div>
-            <div class="card-rarity">${getRarityLabel(data.item.rarity)}</div>
+            <div class="card-sub">${getRarityLabel(data.item.rarity)}</div>
           </div>
         </div>
-        <div class="rarity-name">${getRarityLabel(data.item.rarity)}</div>
+        <div class="rarity-line"></div>
+        <div class="rarity-tag">${getRarityLabel(data.item.rarity)}</div>
       `;
       fetchUsers();
     } else {
@@ -4250,14 +4283,12 @@ async function pickCarneusCard(choice) {
 function spawnCarneusParticles() {
   const container = document.getElementById('carneusParticles');
   container.innerHTML = '';
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 40; i++) {
     const p = document.createElement('div');
     p.className = 'carneus-particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (3 + Math.random() * 4) + 's';
-    p.style.animationDelay = (Math.random() * 3) + 's';
-    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
-    p.style.background = ['#0066ff','#0044cc','#0088ff','#0033aa'][Math.floor(Math.random() * 4)];
+    const a = Math.random() * 360;
+    const d = 40 + Math.random() * 40;
+    p.style.cssText = 'left:' + (50 + Math.cos(a)*d/2) + '%;top:' + (50 + Math.sin(a)*d/2) + '%;animation-duration:' + (4+Math.random()*6) + 's;animation-delay:' + (Math.random()*4) + 's';
     container.appendChild(p);
   }
 }
@@ -4266,7 +4297,7 @@ function renderUserInventory(inventory) {
   const grid = document.getElementById('userInventory');
   grid.innerHTML = '';
   if (!inventory || inventory.length === 0) {
-    grid.innerHTML = '<div style="color:rgba(240,230,255,0.2);font-size:13px;text-align:center;padding:20px 0;">Пусто</div>';
+    grid.innerHTML = '<div style="color:rgba(255,255,255,0.08);font-size:11px;text-align:center;padding:20px 0;letter-spacing:2px;">ПУСТО</div>';
     return;
   }
   const itemsMap = getAllItemsMap();
@@ -4275,7 +4306,7 @@ function renderUserInventory(inventory) {
     if (!item) return;
     const div = document.createElement('div');
     div.className = 'inv-item rarity-' + item.rarity;
-    div.title = item.name + ' (' + getRarityLabel(item.rarity) + ')';
+    div.title = item.name;
     div.innerHTML = `
       <img src="${item.file}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
       <div class="inv-label">${item.name}</div>
@@ -4328,15 +4359,17 @@ function getAllItemsMap() {
 }
 
 async function craftCarneusKey() {
+  const act = Math.min(craftQuality, (usersData.find(u => u.name === currentUser) || {}).faourines?.activated || 0);
   try {
     const res = await fetch('/api/carneus/craft', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: currentUser })
+      body: JSON.stringify({ name: currentUser, activatedCount: act })
     });
     const data = await res.json();
     if (data.success) {
-      showToast('🔑 Ключ Карнеуса создан!', 'good');
+      const labels = ['тусклый', 'слабый', 'обычный', 'чистый', 'сияющий', 'идеальный'];
+      showToast('🔑 Ключ (' + labels[data.quality] + ') создан!', 'good');
       fetchUsers();
     } else {
       showToast(data.error || 'Ошибка', 'bad');

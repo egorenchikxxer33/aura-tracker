@@ -93,7 +93,7 @@ function loadData() {
   }
   const users = {};
   USER_NAMES.forEach(name => {
-    users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 } };
+    users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 }, keys: 0, inventory: [], keyQualities: [] };
   });
   return { users };
 }
@@ -105,6 +105,7 @@ Object.values(data.users).forEach(u => {
   if (!u.faourines) u.faourines = { unactivated: 0, activated: 0 };
   if (u.keys === undefined) u.keys = 0;
   if (!u.inventory) u.inventory = [];
+  if (!u.keyQualities) u.keyQualities = [];
 });
 
 function saveData() {
@@ -175,7 +176,7 @@ app.post('/api/reset', (req, res) => {
     return res.status(403).json({ error: 'Только оператор' });
   }
   USER_NAMES.forEach(name => {
-    data.users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 }, keys: 0, inventory: [] };
+    data.users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 }, keys: 0, inventory: [], keyQualities: [] };
   });
   saveData();
   res.json({ success: true });
@@ -276,17 +277,47 @@ app.post('/api/sell', (req, res) => {
 });
 
 app.post('/api/carneus/craft', (req, res) => {
-  const { name } = req.body;
+  const { name, activatedCount } = req.body;
   if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
   const u = data.users[name];
-  if (u.faourines.activated < 5) {
-    return res.status(400).json({ error: 'Нужно 5 активированных фауринов' });
+  const act = Math.max(0, Math.min(5, parseInt(activatedCount) || 0));
+  const unact = 5 - act;
+
+  if (u.faourines.activated < act || u.faourines.unactivated < unact) {
+    return res.status(400).json({ error: 'Недостаточно фауринов' });
   }
-  u.faourines.activated -= 5;
+
+  u.faourines.activated -= act;
+  u.faourines.unactivated -= unact;
   u.keys += 1;
+  if (!u.keyQualities) u.keyQualities = [];
+  u.keyQualities.push(act);
   saveData();
-  res.json({ success: true, keys: u.keys, activated: u.faourines.activated });
+  res.json({
+    success: true, keys: u.keys, activated: u.faourines.activated,
+    unactivated: u.faourines.unactivated, quality: act
+  });
 });
+
+const RARITY_WEIGHTS = {
+  0: { common: 50, uncommon: 35, rare: 12, epic: 2.5, legendary: 0.5 },
+  1: { common: 40, uncommon: 30, rare: 22, epic: 6, legendary: 2 },
+  2: { common: 30, uncommon: 28, rare: 28, epic: 10, legendary: 4 },
+  3: { common: 20, uncommon: 25, rare: 30, epic: 17, legendary: 8 },
+  4: { common: 12, uncommon: 20, rare: 32, epic: 24, legendary: 12 },
+  5: { common: 5, uncommon: 15, rare: 30, epic: 30, legendary: 20 }
+};
+
+function pickRarity(quality) {
+  const w = RARITY_WEIGHTS[Math.min(5, Math.max(0, quality))];
+  const r = Math.random() * 100;
+  let cum = 0;
+  for (const [rarity, weight] of Object.entries(w)) {
+    cum += weight;
+    if (r <= cum) return rarity;
+  }
+  return 'common';
+}
 
 app.post('/api/carneus/open', (req, res) => {
   const { name } = req.body;
@@ -294,19 +325,35 @@ app.post('/api/carneus/open', (req, res) => {
   const u = data.users[name];
   if (u.keys < 1) return res.status(400).json({ error: 'Нет ключей' });
 
-  const pool = [...CARNEUS_ITEMS];
+  // Get key quality
+  if (!u.keyQualities) u.keyQualities = [];
+  const quality = u.keyQualities.length > 0 ? u.keyQualities.shift() : 0;
+  u.keys -= 1;
+
+  // Pick 3 items by weighted rarity
   const picked = [];
+  const available = [...CARNEUS_ITEMS];
   for (let i = 0; i < 3; i++) {
-    const idx = Math.floor(Math.random() * pool.length);
-    picked.push(pool.splice(idx, 1)[0]);
+    if (available.length === 0) break;
+    const rarity = pickRarity(quality);
+    const candidates = available.filter(it => it.rarity === rarity);
+    let item;
+    if (candidates.length > 0) {
+      const idx = Math.floor(Math.random() * candidates.length);
+      item = candidates[idx];
+    } else {
+      const idx = Math.floor(Math.random() * available.length);
+      item = available[idx];
+    }
+    picked.push(item);
+    available.splice(available.indexOf(item), 1);
   }
 
-  u.keys -= 1;
   saveData();
 
   const sessionId = crypto.randomBytes(8).toString('hex');
   carneusSessions[name] = { items: picked, expiry: Date.now() + 60000 };
-  res.json({ success: true, sessionId, items: picked, keys: u.keys });
+  res.json({ success: true, sessionId, items: picked, keys: u.keys, quality });
 });
 
 app.post('/api/carneus/claim', (req, res) => {

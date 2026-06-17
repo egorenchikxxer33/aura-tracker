@@ -42,6 +42,47 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Activation sessions: { [name]: { index, startTime } }
 const activationSessions = {};
 
+// Carneus sessions: { [name]: { items: [...], expiry: timestamp } }
+const carneusSessions = {};
+
+const CARNEUS_ITEMS = [
+  { id: 'c1', name: 'AVENTUS духи', rarity: 'common', file: 'items/AVENTUS духи.jpg' },
+  { id: 'c2', name: 'Версачи духи синие', rarity: 'common', file: 'items/версачи духи синие.jpg' },
+  { id: 'c3', name: 'Джинсы перпл', rarity: 'common', file: 'items/джинсы перпл.jpg' },
+  { id: 'c4', name: 'Духи валентино', rarity: 'common', file: 'items/духи валентино.jpg' },
+  { id: 'c5', name: 'Репликанты черно белые', rarity: 'common', file: 'items/репликанты черно белые.jpg' },
+  { id: 'c6', name: 'Скоты собачки', rarity: 'common', file: 'items/скоты собачки.jpg' },
+  { id: 'c7', name: 'Джорики красные 23', rarity: 'uncommon', file: 'items/джорики красные 23.jpg' },
+  { id: 'c8', name: 'Джорики синие', rarity: 'uncommon', file: 'items/джорики синие.jpeg' },
+  { id: 'c9', name: 'Джорики супер черные', rarity: 'uncommon', file: 'items/джорики супер черные.jpeg' },
+  { id: 'c10', name: 'Рафы кулоны темно синие', rarity: 'uncommon', file: 'items/рафы кулоны темно синие.jpg' },
+  { id: 'c11', name: 'Футболка стендофф', rarity: 'uncommon', file: 'items/супер крутая футболка стендофф.jpg' },
+  { id: 'c12', name: 'Часы серебрянные', rarity: 'uncommon', file: 'items/чсаы серебрянные.png' },
+  { id: 'c13', name: 'Джереми скоты usa', rarity: 'rare', file: 'items/джереми скоты usa.jpg' },
+  { id: 'c14', name: 'Джорданы 10 белые', rarity: 'rare', file: 'items/джорданы 10 белые.jpg' },
+  { id: 'c15', name: 'Джорданы 45', rarity: 'rare', file: 'items/джорданы 45.jpg' },
+  { id: 'c16', name: 'Инста пампы черные', rarity: 'rare', file: 'items/инста пампы черные.png' },
+  { id: 'c17', name: 'Озвиги фиолетовые', rarity: 'rare', file: 'items/озвиги фиолетовые.jpg' },
+  { id: 'c18', name: 'Офф дай белый', rarity: 'rare', file: 'items/офф дай белый.jpg' },
+  { id: 'c19', name: 'Офф дай оренж', rarity: 'rare', file: 'items/офф дай оренж.jpg' },
+  { id: 'c20', name: 'Оффф дай синий', rarity: 'rare', file: 'items/оффф дай синий.jpg' },
+  { id: 'c21', name: 'Рафы кулоны черно-красные', rarity: 'rare', file: 'items/рафы кулоны черно-красные.png' },
+  { id: 'c22', name: 'Скоты леопардовые', rarity: 'rare', file: 'items/скоты леопардовые.jpg' },
+  { id: 'c23', name: 'Скоты медведи зелени', rarity: 'rare', file: 'items/скоты медведи зелени.jpg' },
+  { id: 'c24', name: 'Скоты тотемы', rarity: 'rare', file: 'items/скоты тотемы.jpg' },
+  { id: 'c25', name: 'Стонисланд свитшот', rarity: 'rare', file: 'items/стонисланд свитшот.jpg' },
+  { id: 'c26', name: 'Сумка гуччи', rarity: 'rare', file: 'items/сумка гуччи.jpg' },
+  { id: 'c27', name: 'Мохнатая сумка баленса', rarity: 'epic', file: 'items/мохнатая сумка баленса.jpg' },
+  { id: 'c28', name: 'Офигенные инста пампы ветмо', rarity: 'epic', file: 'items/офигенные иснта пампы ветмо.jpg' },
+  { id: 'c29', name: 'Скоты с крылашкими черные', rarity: 'epic', file: 'items/скоты с крылашкими черные.jpg' },
+  { id: 'c30', name: 'Сумка баленсиага', rarity: 'epic', file: 'items/сумка баленсиага.jpg' },
+  { id: 'c31', name: 'Сумка гуччи крутая', rarity: 'epic', file: 'items/сумка гуччи крутая.jpeg' },
+  { id: 'c32', name: 'Хеллстар кофта', rarity: 'epic', file: 'items/хеллстар кофта.jpg' },
+  { id: 'c33', name: 'Кофта хеллстар рекордс', rarity: 'legendary', file: 'items/кофта хеллстар рекордс.jpg' },
+  { id: 'c34', name: 'Хеллстар бошка кофта', rarity: 'legendary', file: 'items/хеллстар бошка кофта.jpg' },
+  { id: 'c35', name: 'Часы ролекс алмазные', rarity: 'legendary', file: 'items/часы ролекс алмазные.png' }
+];
+
 function loadData() {
   try {
     if (fs.existsSync(DATA_FILE)) {
@@ -62,6 +103,8 @@ let data = loadData();
 // Migrate old data
 Object.values(data.users).forEach(u => {
   if (!u.faourines) u.faourines = { unactivated: 0, activated: 0 };
+  if (u.keys === undefined) u.keys = 0;
+  if (!u.inventory) u.inventory = [];
 });
 
 function saveData() {
@@ -132,7 +175,7 @@ app.post('/api/reset', (req, res) => {
     return res.status(403).json({ error: 'Только оператор' });
   }
   USER_NAMES.forEach(name => {
-    data.users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 } };
+    data.users[name] = { aura: 100, fines: [], faourines: { unactivated: 0, activated: 0 }, keys: 0, inventory: [] };
   });
   saveData();
   res.json({ success: true });
@@ -230,6 +273,101 @@ app.post('/api/sell', (req, res) => {
   data.users[name].aura += reward;
   saveData();
   res.json({ success: true, reward, aura: data.users[name].aura, activated: data.users[name].faourines.activated });
+});
+
+app.post('/api/carneus/craft', (req, res) => {
+  const { name } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  const u = data.users[name];
+  if (u.faourines.activated < 5) {
+    return res.status(400).json({ error: 'Нужно 5 активированных фауринов' });
+  }
+  u.faourines.activated -= 5;
+  u.keys += 1;
+  saveData();
+  res.json({ success: true, keys: u.keys, activated: u.faourines.activated });
+});
+
+app.post('/api/carneus/open', (req, res) => {
+  const { name } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  const u = data.users[name];
+  if (u.keys < 1) return res.status(400).json({ error: 'Нет ключей' });
+
+  const pool = [...CARNEUS_ITEMS];
+  const picked = [];
+  for (let i = 0; i < 3; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    picked.push(pool.splice(idx, 1)[0]);
+  }
+
+  u.keys -= 1;
+  saveData();
+
+  const sessionId = crypto.randomBytes(8).toString('hex');
+  carneusSessions[name] = { items: picked, expiry: Date.now() + 60000 };
+  res.json({ success: true, sessionId, items: picked, keys: u.keys });
+});
+
+app.post('/api/carneus/claim', (req, res) => {
+  const { name, sessionId, choice } = req.body;
+  if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
+  const session = carneusSessions[name];
+  if (!session || session.expiry < Date.now()) {
+    delete carneusSessions[name];
+    return res.status(400).json({ error: 'Сессия истекла' });
+  }
+  const idx = parseInt(choice);
+  if (isNaN(idx) || idx < 0 || idx > 2) {
+    return res.status(400).json({ error: 'Неверный выбор' });
+  }
+  const item = session.items[idx];
+  data.users[name].inventory.push({ id: item.id, acquired: new Date().toISOString() });
+  saveData();
+  delete carneusSessions[name];
+  res.json({ success: true, item, inventory: data.users[name].inventory });
+});
+
+app.post('/api/carneus/inventory', (req, res) => {
+  const { password, target, action, itemId } = req.body;
+  if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
+  if (!data.users[target]) return res.status(404).json({ error: 'Не найден' });
+
+  if (action === 'get') {
+    return res.json({
+      inventory: data.users[target].inventory,
+      keys: data.users[target].keys,
+      items: CARNEUS_ITEMS
+    });
+  }
+  if (action === 'addItem') {
+    if (!itemId || !CARNEUS_ITEMS.find(i => i.id === itemId)) {
+      return res.status(400).json({ error: 'Неверный ID предмета' });
+    }
+    data.users[target].inventory.push({ id: itemId, acquired: new Date().toISOString() });
+    saveData();
+    return res.json({ success: true, inventory: data.users[target].inventory });
+  }
+  if (action === 'removeItem') {
+    const idx = data.users[target].inventory.findIndex(i => i.id === itemId);
+    if (idx === -1) return res.status(400).json({ error: 'Предмет не найден' });
+    data.users[target].inventory.splice(idx, 1);
+    saveData();
+    return res.json({ success: true, inventory: data.users[target].inventory });
+  }
+  if (action === 'addKeys') {
+    const count = parseInt(req.body.count) || 1;
+    data.users[target].keys += count;
+    saveData();
+    return res.json({ success: true, keys: data.users[target].keys });
+  }
+  if (action === 'removeKeys') {
+    const count = parseInt(req.body.count) || 1;
+    data.users[target].keys = Math.max(0, data.users[target].keys - count);
+    saveData();
+    return res.json({ success: true, keys: data.users[target].keys });
+  }
+  res.status(400).json({ error: 'Неверное действие' });
 });
 
 app.post('/api/maintenance', (req, res) => {

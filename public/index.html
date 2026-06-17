@@ -2247,6 +2247,234 @@ canvas#particles {
   0% { transform: translate(0, 0) scale(1); opacity: 1; }
   100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
 }
+
+/* ===== CARNEUS ===== */
+.carneus-overlay {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(ellipse at center, #0a0a2e 0%, #000010 100%);
+  z-index: 10000; display:flex; align-items:center; justify-content:center;
+  flex-direction:column; opacity:0; pointer-events:none;
+  transition: opacity 0.6s ease;
+}
+.carneus-overlay.active { opacity:1; pointer-events:all; }
+
+.carneus-container {
+  text-align:center; max-width:900px; width:100%; padding:20px;
+  position:relative;
+}
+
+.carneus-title {
+  font-size:36px; font-weight:900; letter-spacing:6px;
+  background: linear-gradient(135deg, #00d4ff, #0066ff, #00d4ff);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  text-shadow: 0 0 40px rgba(0,100,255,0.3); margin-bottom:10px;
+  font-family: 'Segoe UI', sans-serif;
+}
+.carneus-subtitle {
+  color: rgba(0,180,255,0.5); font-size:14px; letter-spacing:3px;
+  margin-bottom:30px; font-family: 'Courier New', monospace;
+}
+
+/* Stage 1: Insert Key */
+.carneus-key-slot {
+  width:300px; height:160px; margin:40px auto;
+  border:2px dashed rgba(0,150,255,0.3); border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:12px;
+  background: rgba(0,50,150,0.05); position:relative;
+  transition: all 0.3s;
+}
+.carneus-key-slot .key-icon { font-size:48px; opacity:0.3; }
+.carneus-key-slot .key-label { color:rgba(0,180,255,0.4); font-size:13px; letter-spacing:2px; }
+.carneus-key-count {
+  color: rgba(0,180,255,0.6); font-size:14px; margin-bottom:20px;
+}
+
+.carneus-btn {
+  padding:12px 40px; border:none; border-radius:8px;
+  font-size:16px; font-weight:700; letter-spacing:2px;
+  cursor:pointer; transition: all 0.3s;
+  background: linear-gradient(135deg, #0044ff, #0088ff);
+  color:white; box-shadow: 0 0 30px rgba(0,100,255,0.3);
+}
+.carneus-btn:hover { transform:scale(1.05); box-shadow:0 0 50px rgba(0,100,255,0.5); }
+.carneus-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+.carneus-btn.outline {
+  background:transparent; border:1px solid rgba(0,150,255,0.4); color:rgba(0,180,255,0.8);
+  box-shadow:none;
+}
+.carneus-btn.outline:hover { background:rgba(0,100,255,0.1); }
+
+/* Stage 2: Card Pick */
+.carneus-cards {
+  display:flex; gap:20px; justify-content:center; flex-wrap:wrap;
+  margin:30px 0; perspective: 1000px;
+}
+.carneus-card {
+  width:220px; height:300px; border-radius:16px; cursor:pointer;
+  position:relative; overflow:hidden; transition: all 0.5s ease;
+  transform-style: preserve-3d;
+  border: 2px solid rgba(0,100,255,0.3);
+  box-shadow: 0 0 30px rgba(0,50,200,0.2);
+  background: linear-gradient(145deg, #0a0a3e, #050520);
+}
+.carneus-card:hover {
+  transform: translateY(-15px) scale(1.03);
+  border-color: rgba(0,180,255,0.6);
+  box-shadow: 0 20px 60px rgba(0,100,255,0.4);
+}
+.carneus-card img {
+  width:100%; height:100%; object-fit:cover;
+  display:block; transition: opacity 0.3s;
+}
+.carneus-card .card-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:12px; background: linear-gradient(transparent, rgba(0,0,20,0.95));
+  text-align:center;
+}
+.carneus-card .card-name { font-size:13px; font-weight:700; color:white; margin-bottom:2px; }
+.carneus-card .card-rarity { font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.rarity-common .card-rarity { color: #888; }
+.rarity-uncommon .card-rarity { color: #4caf50; }
+.rarity-rare .card-rarity { color: #2196f3; }
+.rarity-epic .card-rarity { color: #9c27b0; }
+.rarity-legendary .card-rarity { color: #ffd700; text-shadow:0 0 20px rgba(255,215,0,0.5); }
+
+.rarity-common { border-color:rgba(136,136,136,0.4) !important; }
+.rarity-uncommon { border-color:rgba(76,175,80,0.4) !important; }
+.rarity-rare { border-color:rgba(33,150,243,0.5) !important; }
+.rarity-epic { border-color:rgba(156,39,176,0.5) !important; }
+.rarity-legendary {
+  border-color:rgba(255,215,0,0.6) !important;
+  box-shadow: 0 0 40px rgba(255,215,0,0.2), 0 0 80px rgba(255,215,0,0.1) !important;
+}
+
+/* Burn animation */
+.carneus-card.burning {
+  animation: blackBurn 0.8s ease forwards;
+  pointer-events:none;
+}
+@keyframes blackBurn {
+  0% { filter:brightness(1); transform:scale(1); opacity:1; }
+  30% { filter:brightness(0.3) saturate(0); transform:scale(1.05); }
+  60% { filter:brightness(0) saturate(0); transform:scale(0.9); opacity:0.7; }
+  100% { filter:brightness(0); transform:scale(0.5) rotateY(90deg); opacity:0; }
+}
+.carneus-card.burning::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(circle at center, #000 0%, transparent 70%);
+  animation: burnGlow 0.8s ease forwards;
+  z-index:2; pointer-events:none;
+}
+@keyframes burnGlow {
+  0% { opacity:0; }
+  20% { opacity:1; background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 0%, rgba(0,50,200,0.3) 50%, transparent 70%); }
+  50% { opacity:1; background: radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,50,0.4) 60%, transparent 80%); }
+  100% { opacity:1; background:#000; }
+}
+
+.carneus-card.chosen {
+  animation: cardReveal 0.6s ease forwards;
+  z-index:10;
+}
+@keyframes cardReveal {
+  0% { transform:translateY(0) scale(1); }
+  50% { transform:translateY(-30px) scale(1.1); box-shadow: 0 30px 80px rgba(0,100,255,0.6); }
+  100% { transform:translateY(0) scale(1); }
+}
+
+.carneus-pick-hint {
+  color: rgba(0,180,255,0.4); font-size:13px; letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+/* Stage 3: Result */
+.carneus-result {
+  text-align:center; padding:40px;
+}
+.carneus-result .big-item {
+  display:inline-block;
+  width:300px; height:380px; border-radius:20px; overflow:hidden;
+  border: 3px solid rgba(255,215,0,0.5);
+  box-shadow: 0 0 60px rgba(255,215,0,0.2);
+  position:relative;
+}
+.carneus-result .big-item img { width:100%; height:100%; object-fit:cover; }
+.carneus-result .big-item .card-overlay {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:16px; background: linear-gradient(transparent, rgba(0,0,20,0.95));
+  text-align:center;
+}
+.carneus-result .big-item .card-name { font-size:18px; font-weight:700; color:white; }
+.carneus-result .big-item .card-rarity { font-size:13px; letter-spacing:3px; text-transform:uppercase; margin-top:4px; }
+.carneus-result .get-label {
+  font-size:12px; color:rgba(0,180,255,0.5); letter-spacing:3px;
+  margin-bottom:8px;
+}
+.carneus-result .rarity-name {
+  font-size:11px; letter-spacing:4px; text-transform:uppercase;
+  color: rgba(0,180,255,0.3); margin-top:20px;
+}
+
+.carneus-particles {
+  position:fixed; inset:0; pointer-events:none; z-index:10001;
+  overflow:hidden;
+}
+.carneus-particle {
+  position:absolute; width:4px; height:4px; border-radius:50%;
+  background: #0066ff; animation: carParticleFall linear forwards;
+}
+@keyframes carParticleFall {
+  0% { transform:translateY(-10vh) rotate(0deg); opacity:1; }
+  100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+}
+
+/* ===== INVENTORY ===== */
+.inv-panel { margin-top:12px; }
+.inv-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr));
+  gap:8px; margin:10px 0; max-height:400px; overflow-y:auto;
+}
+.inv-item {
+  border-radius:10px; overflow:hidden; cursor:pointer;
+  border:2px solid rgba(255,255,255,0.08); transition:all 0.3s;
+  position:relative; aspect-ratio:3/4;
+}
+.inv-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.inv-item .inv-label {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:6px 4px; background:linear-gradient(transparent,rgba(0,0,20,0.9));
+  font-size:9px; text-align:center; color:white;
+  line-height:1.2;
+}
+.inv-item:hover { transform:scale(1.05); border-color:rgba(0,180,255,0.3); }
+.inv-count { font-size:12px; color:rgba(0,180,255,0.3); margin-bottom:6px; }
+
+.inv-craft-section {
+  background: rgba(0,50,150,0.1); border-radius:12px;
+  padding:16px; margin-top:12px; border:1px solid rgba(0,100,255,0.15);
+  text-align:center;
+}
+.inv-craft-label { font-size:12px; color:rgba(0,180,255,0.4); margin-bottom:8px; letter-spacing:1px; }
+
+/* ===== ADMIN INVENTORY ===== */
+.admin-inv-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(70px,1fr));
+  gap:6px; margin:8px 0; max-height:300px; overflow-y:auto;
+}
+.admin-inv-item {
+  border-radius:8px; overflow:hidden; cursor:pointer; position:relative;
+  border:2px solid rgba(255,255,255,0.08); aspect-ratio:3/4;
+}
+.admin-inv-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.admin-inv-item .inv-del {
+  position:absolute; top:2px; right:2px; width:18px; height:18px;
+  background:rgba(255,0,0,0.7); border:none; border-radius:50%;
+  color:white; font-size:10px; cursor:pointer; line-height:18px; text-align:center;
+  opacity:0; transition:opacity 0.2s;
+}
+.admin-inv-item:hover .inv-del { opacity:1; }
+.admin-inv-empty { color:rgba(240,230,255,0.2); font-size:13px; text-align:center; padding:20px 0; }
 </style>
 </head>
 <body>
@@ -2375,6 +2603,25 @@ canvas#particles {
           <button class="admin-btn pink" id="activateBtn" onclick="startActivation()" disabled style="display:none;">◇ Активировать фаурин</button>
           <button class="admin-btn cyan" id="sellBtn" onclick="startSellAnimation()" disabled style="display:none;">◆ Продать фаурин</button>
         </div>
+
+        <div class="admin-section">
+          <button class="admin-btn cyan" id="carneusBtn" onclick="openCarneusPage()" style="width:100%;">🗝 Открытие Карнеусов</button>
+        </div>
+
+        <!-- ===== INVENTORY PANEL ===== -->
+        <div class="admin-section inv-panel">
+          <h4>🎒 Инвентарь</h4>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+            <span style="color:rgba(0,180,255,0.5);font-size:12px;">🗝 Ключи:</span>
+            <span style="color:#00d4ff;font-size:16px;font-weight:700;" id="userKeysCount">0</span>
+          </div>
+          <div class="inv-grid" id="userInventory"></div>
+          <div class="inv-craft-section">
+            <div class="inv-craft-label">Скрафтить ключ Карнеуса из 5 ◆ фауринов</div>
+            <button class="carneus-btn outline" id="craftKeyBtn" onclick="craftCarneusKey()">⚒ Скрафтить</button>
+            <div style="font-size:11px;color:rgba(0,180,255,0.25);margin-top:6px;">◆ Активированных: <span id="craftFaourineCount">0</span></div>
+          </div>
+        </div>
       </div>
 
       <div id="adminPanel" class="admin-panel glass" style="display:none;">
@@ -2422,6 +2669,22 @@ canvas#particles {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;" id="animPickerGrid"></div>
           </div>
         </div>
+
+        <div class="admin-section">
+          <h4>🎒 Инвентарь игрока</h4>
+          <select id="adminInvUserSelect" onchange="adminLoadInventory()"></select>
+          <div style="display:flex;gap:8px;align-items:center;margin:6px 0;">
+            <span style="color:rgba(0,180,255,0.5);font-size:12px;">🗝 Ключи:</span>
+            <span style="color:#00d4ff;font-size:16px;font-weight:700;" id="adminUserKeys">0</span>
+            <button class="admin-btn cyan sm" onclick="adminAddKeys()">+1</button>
+            <button class="admin-btn danger sm" onclick="adminRemoveKeys()">−1</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+            <select id="adminAddItemSelect" style="flex:1;min-width:120px;"></select>
+            <button class="admin-btn cyan sm" onclick="adminAddItem()">+ Добавить</button>
+          </div>
+          <div class="admin-inv-grid" id="adminInventoryGrid"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -2461,6 +2724,43 @@ canvas#particles {
     <div class="modal-actions">
       <button class="admin-btn outline" onclick="closeModal()">Отмена</button>
       <button class="admin-btn danger" id="modalConfirm" onclick="resetAll()">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARNEUS OVERLAY ===== -->
+<div class="carneus-overlay" id="carneusOverlay">
+  <div class="carneus-particles" id="carneusParticles"></div>
+  <div class="carneus-container">
+    <!-- Stage 1: Insert Key -->
+    <div id="carneusStage1">
+      <div class="carneus-title">🗝 КАРНЕУС</div>
+      <div class="carneus-subtitle">— ДРЕВНИЙ СУНДУК —</div>
+      <div class="carneus-key-slot">
+        <div class="key-icon">🗝</div>
+        <div class="key-label">ВСТАВЬТЕ КЛЮЧ ДЛЯ ОТКРЫТИЯ</div>
+      </div>
+      <div class="carneus-key-count">У вас ключей: <span id="carneusKeyCount">0</span></div>
+      <button class="carneus-btn" id="openCarneusBtn" onclick="startCarneusOpen()">🔓 Открыть Карнеус</button>
+      <br><br>
+      <button class="carneus-btn outline" onclick="closeCarneusPage()">✕ Закрыть</button>
+    </div>
+
+    <!-- Stage 2: Pick a Card -->
+    <div id="carneusStage2" style="display:none;">
+      <div class="carneus-title">🎴 ВЫБЕРИТЕ ДОБЫЧУ</div>
+      <div class="carneus-subtitle">— ТРИ СУДЬБЫ, ОДИН ВЫБОР —</div>
+      <div class="carneus-pick-hint">Нажмите на карту, чтобы забрать. Остальные сгорят.</div>
+      <div class="carneus-cards" id="carneusCards"></div>
+    </div>
+
+    <!-- Stage 3: Result -->
+    <div id="carneusStage3" style="display:none;">
+      <div class="carneus-title">✨ ДОБЫЧА ПОЛУЧЕНА</div>
+      <div class="carneus-subtitle">— ПРЕДМЕТ ДОБАВЛЕН В ИНВЕНТАРЬ —</div>
+      <div class="carneus-result" id="carneusResultContent"></div>
+      <br>
+      <button class="carneus-btn outline" onclick="closeCarneusPage()">✕ Закрыть</button>
     </div>
   </div>
 </div>
@@ -2713,7 +3013,9 @@ function populateSelects() {
   const auraSel = document.getElementById('auraUserSelect');
   const fineSel = document.getElementById('fineUserSelect');
   const finesSel = document.getElementById('finesUserSelect');
-  [auraSel, fineSel, finesSel].forEach(sel => {
+  const invSel = document.getElementById('adminInvUserSelect');
+  [auraSel, fineSel, finesSel, invSel].forEach(sel => {
+    if (!sel) return;
     sel.innerHTML = '';
     USERS.forEach(name => {
       const opt = document.createElement('option');
@@ -3305,6 +3607,13 @@ function updateMiningUI(data) {
   } else {
     sellBtn.style.display = 'none';
   }
+
+  // Carneus / inventory
+  const keys = user.keys || 0;
+  document.getElementById('userKeysCount').textContent = keys;
+  document.getElementById('craftFaourineCount').textContent = fa.activated;
+  document.getElementById('craftKeyBtn').disabled = fa.activated < 5;
+  renderUserInventory(user.inventory || []);
 }
 
 let miningCancelled = false;
@@ -3822,7 +4131,339 @@ function showAnimPicker() {
   picker.style.display = 'block';
 }
 
-// Override enterDashboard to show mining panel
+// ===== CARNEUS SYSTEM =====
+let carneusSessionId = null;
+
+function openCarneusPage() {
+  document.getElementById('carneusOverlay').classList.add('active');
+  document.getElementById('carneusStage1').style.display = 'block';
+  document.getElementById('carneusStage2').style.display = 'none';
+  document.getElementById('carneusStage3').style.display = 'none';
+  const user = usersData.find(u => u.name === currentUser);
+  document.getElementById('carneusKeyCount').textContent = (user && user.keys) || 0;
+  document.getElementById('openCarneusBtn').disabled = !(user && user.keys > 0);
+  spawnCarneusParticles();
+}
+
+function closeCarneusPage() {
+  document.getElementById('carneusOverlay').classList.remove('active');
+  document.getElementById('carneusParticles').innerHTML = '';
+}
+
+async function startCarneusOpen() {
+  const btn = document.getElementById('openCarneusBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Открытие...';
+  try {
+    const res = await fetch('/api/carneus/open', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser })
+    });
+    const data = await res.json();
+    if (data.success) {
+      carneusSessionId = data.sessionId;
+      document.getElementById('carneusStage1').style.display = 'none';
+      document.getElementById('carneusStage2').style.display = 'block';
+      renderCarneusCards(data.items);
+      const user = usersData.find(u => u.name === currentUser);
+      if (user) user.keys = data.keys;
+      document.getElementById('carneusKeyCount').textContent = data.keys;
+      fetchUsers();
+    } else {
+      showToast(data.error || 'Ошибка', 'bad');
+    }
+  } catch (e) {
+    showToast('Ошибка соединения', 'bad');
+  }
+  btn.disabled = false;
+  btn.textContent = '🔓 Открыть Карнеус';
+}
+
+function renderCarneusCards(items) {
+  const container = document.getElementById('carneusCards');
+  container.innerHTML = '';
+  items.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'carneus-card rarity-' + item.rarity;
+    card.dataset.idx = idx;
+    card.innerHTML = `
+      <img src="${item.file}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="card-overlay">
+        <div class="card-name">${item.name}</div>
+        <div class="card-rarity">${getRarityLabel(item.rarity)}</div>
+      </div>
+    `;
+    card.onclick = () => pickCarneusCard(idx);
+    container.appendChild(card);
+  });
+}
+
+function getRarityLabel(rarity) {
+  const labels = { common: 'ОБЫЧНЫЙ', uncommon: 'НЕОБЫЧНЫЙ', rare: 'РЕДКИЙ', epic: 'ЭПИЧЕСКИЙ', legendary: 'ЛЕГЕНДАРНЫЙ' };
+  return labels[rarity] || rarity.toUpperCase();
+}
+
+async function pickCarneusCard(choice) {
+  const cards = document.querySelectorAll('.carneus-card');
+  cards.forEach((c, i) => {
+    if (i !== choice) {
+      c.classList.add('burning');
+    }
+  });
+  const chosen = cards[choice];
+  chosen.classList.add('chosen');
+
+  try {
+    const res = await fetch('/api/carneus/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser, sessionId: carneusSessionId, choice })
+    });
+    const data = await res.json();
+    if (data.success) {
+      await sleep(800);
+      document.getElementById('carneusStage2').style.display = 'none';
+      document.getElementById('carneusStage3').style.display = 'block';
+      document.getElementById('carneusResultContent').innerHTML = `
+        <div class="get-label">★ ВАМ ВЫПАЛО ★</div>
+        <div class="big-item rarity-${data.item.rarity}">
+          <img src="${data.item.file}" alt="${data.item.name}" onerror="this.style.display='none'">
+          <div class="card-overlay">
+            <div class="card-name">${data.item.name}</div>
+            <div class="card-rarity">${getRarityLabel(data.item.rarity)}</div>
+          </div>
+        </div>
+        <div class="rarity-name">${getRarityLabel(data.item.rarity)}</div>
+      `;
+      fetchUsers();
+    } else {
+      showToast(data.error || 'Ошибка', 'bad');
+      closeCarneusPage();
+    }
+  } catch (e) {
+    showToast('Ошибка соединения', 'bad');
+    closeCarneusPage();
+  }
+}
+
+function spawnCarneusParticles() {
+  const container = document.getElementById('carneusParticles');
+  container.innerHTML = '';
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div');
+    p.className = 'carneus-particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (3 + Math.random() * 4) + 's';
+    p.style.animationDelay = (Math.random() * 3) + 's';
+    p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+    p.style.background = ['#0066ff','#0044cc','#0088ff','#0033aa'][Math.floor(Math.random() * 4)];
+    container.appendChild(p);
+  }
+}
+
+function renderUserInventory(inventory) {
+  const grid = document.getElementById('userInventory');
+  grid.innerHTML = '';
+  if (!inventory || inventory.length === 0) {
+    grid.innerHTML = '<div style="color:rgba(240,230,255,0.2);font-size:13px;text-align:center;padding:20px 0;">Пусто</div>';
+    return;
+  }
+  const itemsMap = getAllItemsMap();
+  inventory.forEach(inv => {
+    const item = itemsMap[inv.id];
+    if (!item) return;
+    const div = document.createElement('div');
+    div.className = 'inv-item rarity-' + item.rarity;
+    div.title = item.name + ' (' + getRarityLabel(item.rarity) + ')';
+    div.innerHTML = `
+      <img src="${item.file}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="inv-label">${item.name}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function getAllItemsMap() {
+  const items = [
+    { id: 'c1', name: 'AVENTUS духи', rarity: 'common', file: 'items/AVENTUS духи.jpg' },
+    { id: 'c2', name: 'Версачи духи синие', rarity: 'common', file: 'items/версачи духи синие.jpg' },
+    { id: 'c3', name: 'Джинсы перпл', rarity: 'common', file: 'items/джинсы перпл.jpg' },
+    { id: 'c4', name: 'Духи валентино', rarity: 'common', file: 'items/духи валентино.jpg' },
+    { id: 'c5', name: 'Репликанты черно белые', rarity: 'common', file: 'items/репликанты черно белые.jpg' },
+    { id: 'c6', name: 'Скоты собачки', rarity: 'common', file: 'items/скоты собачки.jpg' },
+    { id: 'c7', name: 'Джорики красные 23', rarity: 'uncommon', file: 'items/джорики красные 23.jpg' },
+    { id: 'c8', name: 'Джорики синие', rarity: 'uncommon', file: 'items/джорики синие.jpeg' },
+    { id: 'c9', name: 'Джорики супер черные', rarity: 'uncommon', file: 'items/джорики супер черные.jpeg' },
+    { id: 'c10', name: 'Рафы кулоны темно синие', rarity: 'uncommon', file: 'items/рафы кулоны темно синие.jpg' },
+    { id: 'c11', name: 'Футболка стендофф', rarity: 'uncommon', file: 'items/супер крутая футболка стендофф.jpg' },
+    { id: 'c12', name: 'Часы серебрянные', rarity: 'uncommon', file: 'items/чсаы серебрянные.png' },
+    { id: 'c13', name: 'Джереми скоты usa', rarity: 'rare', file: 'items/джереми скоты usa.jpg' },
+    { id: 'c14', name: 'Джорданы 10 белые', rarity: 'rare', file: 'items/джорданы 10 белые.jpg' },
+    { id: 'c15', name: 'Джорданы 45', rarity: 'rare', file: 'items/джорданы 45.jpg' },
+    { id: 'c16', name: 'Инста пампы черные', rarity: 'rare', file: 'items/инста пампы черные.png' },
+    { id: 'c17', name: 'Озвиги фиолетовые', rarity: 'rare', file: 'items/озвиги фиолетовые.jpg' },
+    { id: 'c18', name: 'Офф дай белый', rarity: 'rare', file: 'items/офф дай белый.jpg' },
+    { id: 'c19', name: 'Офф дай оренж', rarity: 'rare', file: 'items/офф дай оренж.jpg' },
+    { id: 'c20', name: 'Оффф дай синий', rarity: 'rare', file: 'items/оффф дай синий.jpg' },
+    { id: 'c21', name: 'Рафы кулоны черно-красные', rarity: 'rare', file: 'items/рафы кулоны черно-красные.png' },
+    { id: 'c22', name: 'Скоты леопардовые', rarity: 'rare', file: 'items/скоты леопардовые.jpg' },
+    { id: 'c23', name: 'Скоты медведи зелени', rarity: 'rare', file: 'items/скоты медведи зелени.jpg' },
+    { id: 'c24', name: 'Скоты тотемы', rarity: 'rare', file: 'items/скоты тотемы.jpg' },
+    { id: 'c25', name: 'Стонисланд свитшот', rarity: 'rare', file: 'items/стонисланд свитшот.jpg' },
+    { id: 'c26', name: 'Сумка гуччи', rarity: 'rare', file: 'items/сумка гуччи.jpg' },
+    { id: 'c27', name: 'Мохнатая сумка баленса', rarity: 'epic', file: 'items/мохнатая сумка баленса.jpg' },
+    { id: 'c28', name: 'Офигенные инста пампы ветмо', rarity: 'epic', file: 'items/офигенные иснта пампы ветмо.jpg' },
+    { id: 'c29', name: 'Скоты с крылашкими черные', rarity: 'epic', file: 'items/скоты с крылашкими черные.jpg' },
+    { id: 'c30', name: 'Сумка баленсиага', rarity: 'epic', file: 'items/сумка баленсиага.jpg' },
+    { id: 'c31', name: 'Сумка гуччи крутая', rarity: 'epic', file: 'items/сумка гуччи крутая.jpeg' },
+    { id: 'c32', name: 'Хеллстар кофта', rarity: 'epic', file: 'items/хеллстар кофта.jpg' },
+    { id: 'c33', name: 'Кофта хеллстар рекордс', rarity: 'legendary', file: 'items/кофта хеллстар рекордс.jpg' },
+    { id: 'c34', name: 'Хеллстар бошка кофта', rarity: 'legendary', file: 'items/хеллстар бошка кофта.jpg' },
+    { id: 'c35', name: 'Часы ролекс алмазные', rarity: 'legendary', file: 'items/часы ролекс алмазные.png' }
+  ];
+  const map = {};
+  items.forEach(i => map[i.id] = i);
+  return map;
+}
+
+async function craftCarneusKey() {
+  try {
+    const res = await fetch('/api/carneus/craft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('🔑 Ключ Карнеуса создан!', 'good');
+      fetchUsers();
+    } else {
+      showToast(data.error || 'Ошибка', 'bad');
+    }
+  } catch (e) {
+    showToast('Ошибка соединения', 'bad');
+  }
+}
+
+// ===== ADMIN INVENTORY =====
+async function adminLoadInventory() {
+  const target = document.getElementById('adminInvUserSelect').value;
+  if (!target) return;
+  try {
+    const res = await fetch('/api/carneus/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', target, action: 'get' })
+    });
+    const data = await res.json();
+    document.getElementById('adminUserKeys').textContent = data.keys;
+
+    const grid = document.getElementById('adminInventoryGrid');
+    grid.innerHTML = '';
+    if (!data.inventory || data.inventory.length === 0) {
+      grid.innerHTML = '<div class="admin-inv-empty">Нет предметов</div>';
+    } else {
+      const itemsMap = getAllItemsMap();
+      data.inventory.forEach((inv, idx) => {
+        const item = itemsMap[inv.id];
+        if (!item) return;
+        const div = document.createElement('div');
+        div.className = 'admin-inv-item rarity-' + item.rarity;
+        div.title = item.name + ' (' + getRarityLabel(item.rarity) + ')';
+        div.innerHTML = `
+          <img src="${item.file}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+          <button class="inv-del" onclick="adminRemoveItem('${item.id}', event)">✕</button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    // Populate add-item dropdown
+    const addSelect = document.getElementById('adminAddItemSelect');
+    addSelect.innerHTML = '';
+    const allItems = getAllItemsMap();
+    Object.values(allItems).forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.name + ' (' + getRarityLabel(item.rarity) + ')';
+      addSelect.appendChild(opt);
+    });
+  } catch (e) {
+    showToast('Ошибка загрузки', 'bad');
+  }
+}
+
+async function adminRemoveItem(itemId, ev) {
+  ev.stopPropagation();
+  const target = document.getElementById('adminInvUserSelect').value;
+  try {
+    const res = await fetch('/api/carneus/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', target, action: 'removeItem', itemId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Предмет изъят', 'good');
+      adminLoadInventory();
+    }
+  } catch (e) {}
+}
+
+async function adminAddItem() {
+  const target = document.getElementById('adminInvUserSelect').value;
+  const itemId = document.getElementById('adminAddItemSelect').value;
+  if (!target || !itemId) return;
+  try {
+    const res = await fetch('/api/carneus/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', target, action: 'addItem', itemId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Предмет добавлен', 'good');
+      adminLoadInventory();
+    }
+  } catch (e) {}
+}
+
+async function adminAddKeys() {
+  const target = document.getElementById('adminInvUserSelect').value;
+  if (!target) return;
+  try {
+    const res = await fetch('/api/carneus/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', target, action: 'addKeys', count: 1 })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('adminUserKeys').textContent = data.keys;
+      showToast('+1 ключ', 'good');
+    }
+  } catch (e) {}
+}
+
+async function adminRemoveKeys() {
+  const target = document.getElementById('adminInvUserSelect').value;
+  if (!target) return;
+  try {
+    const res = await fetch('/api/carneus/inventory', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: '777', target, action: 'removeKeys', count: 1 })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('adminUserKeys').textContent = data.keys;
+      showToast('-1 ключ', 'good');
+    }
+  } catch (e) {}
+}
+
+// Override enterDashboard to show mining panel and inventory
 const origEnterDashboard = enterDashboard;
 enterDashboard = function() {
   origEnterDashboard();

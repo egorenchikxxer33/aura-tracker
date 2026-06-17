@@ -3348,7 +3348,7 @@ async function runMiningLoop() {
 
       addTermLine(`[раунд ${round}] Подбор: ${key}`, 'dim');
 
-      if (i === maxAttempts - 1 || (i > 3 && Math.random() < 0.04)) {
+      if (i % 3 === 0 || i === maxAttempts - 1) {
         try {
           const res = await fetch('/api/mine/check', {
             method: 'POST',
@@ -3372,7 +3372,7 @@ async function runMiningLoop() {
         }
       }
 
-      await sleep(60 + Math.random() * 100);
+      await sleep(40 + Math.random() * 80);
     }
 
     if (found) {
@@ -3714,7 +3714,7 @@ let bgInterval = setInterval(() => {
 
 // Check for global animation from operator
 function checkGlobalAnim(anim) {
-  if (!anim || lastGlobalAnim && lastGlobalAnim.name === anim.name && lastGlobalAnim.time === anim.time) return;
+  if (!anim || lastGlobalAnim && lastGlobalAnim.id === anim.id) return;
   lastGlobalAnim = anim;
   triggerBgEffect(anim.name);
 }

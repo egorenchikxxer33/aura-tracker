@@ -9,7 +9,8 @@ const ADMIN_PASSWORD = '777';
 const DATA_FILE = path.join(__dirname, 'data.json');
 
 let maintenanceMode = false;
-let globalAnimation = null; // { name, time }
+let globalAnimation = null; // { name, id }
+let animIdCounter = 0;
 
 const USER_NAMES = [
   'Егор Рейдик', 'Назар', 'Лука',
@@ -142,7 +143,7 @@ app.post('/api/mine/check', (req, res) => {
   if (!data.users[name]) return res.status(404).json({ error: 'Не найден' });
 
   const key = generateKey();
-  const success = Math.random() < 0.01;
+  const success = Math.random() < 0.03;
 
   if (success) {
     data.users[name].faourines.unactivated += 1;
@@ -249,9 +250,9 @@ app.post('/api/background/trigger', (req, res) => {
   const { password, animation } = req.body;
   if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
   const name = animation || BG_ANIMATIONS[Math.floor(Math.random() * BG_ANIMATIONS.length)];
-  const animTime = Date.now();
-  globalAnimation = { name, time: animTime };
-  setTimeout(() => { if (globalAnimation && globalAnimation.time === animTime) globalAnimation = null; }, 8000);
+  const id = ++animIdCounter;
+  globalAnimation = { name, id };
+  setTimeout(() => { if (globalAnimation && globalAnimation.id === id) globalAnimation = null; }, 8000);
   res.json({ success: true, animation: name });
 });
 

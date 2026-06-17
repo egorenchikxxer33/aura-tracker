@@ -2468,6 +2468,326 @@ canvas#particles {
 .admin-inv-item .inv-del { position:absolute; top:1px; right:1px; width:14px; height:14px; background:rgba(255,255,255,0.1); border:none; border-radius:50%; color:rgba(255,255,255,0.4); font-size:7px; cursor:pointer; line-height:14px; text-align:center; opacity:0; transition:opacity 0.15s; }
 .admin-inv-item:hover .inv-del { opacity:1; }
 .admin-inv-empty { color:rgba(255,255,255,0.08); font-size:11px; text-align:center; padding:20px 0; letter-spacing:2px; }
+
+/* ===== INVENTORY PAGE ===== */
+.inv-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999;
+  background:rgba(0,0,0,0.92);
+  backdrop-filter:blur(6px);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; transition:opacity 0.6s ease;
+}
+.inv-overlay.active { display:flex; opacity:1; }
+.inv-overlay.active .inv-overlay-container { animation:invSlideUp 0.5s ease forwards; }
+
+@keyframes invSlideUp {
+  0% { opacity:0; transform:translateY(30px) scale(0.97); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.inv-overlay-container {
+  width:90%; max-width:1000px; max-height:90vh; overflow-y:auto;
+  padding:30px 20px; position:relative;
+}
+.inv-overlay-container::-webkit-scrollbar { width:2px; }
+.inv-overlay-container::-webkit-scrollbar-track { background:transparent; }
+.inv-overlay-container::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:2px; }
+
+.inv-overlay-title {
+  font-family:'Unbounded',sans-serif;
+  font-size:22px; font-weight:700; text-align:center;
+  letter-spacing:8px; color:#fff; margin-bottom:2px;
+}
+.inv-overlay-title span { color:rgba(255,255,255,0.2); }
+.inv-overlay-divider {
+  width:40px; height:1px; background:rgba(255,255,255,0.1);
+  margin:12px auto; transition:width 0.4s;
+}
+.inv-overlay:hover .inv-overlay-divider { width:80px; }
+.inv-overlay-subtitle {
+  text-align:center; font-size:9px; letter-spacing:6px;
+  text-transform:uppercase; color:rgba(255,255,255,0.12);
+  margin-bottom:20px;
+}
+
+/* Key area */
+.inv-overlay-key-area {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-bottom:20px;
+}
+.inv-overlay-key-icon {
+  font-size:16px; filter:grayscale(0.3); transition:all 0.3s;
+}
+.inv-overlay-key-icon.has-keys { filter:grayscale(0); animation:keyPulse 2s ease-in-out infinite; }
+@keyframes keyPulse {
+  0%,100% { transform:scale(1); opacity:0.7; }
+  50% { transform:scale(1.15); opacity:1; }
+}
+.inv-overlay-key-count {
+  font-family:'Unbounded',sans-serif;
+  font-size:28px; color:#fff; letter-spacing:2px;
+  transition:all 0.3s; position:relative;
+}
+.inv-overlay-key-count.pop { animation:keyPop 0.3s ease; }
+@keyframes keyPop {
+  0% { transform:scale(1); }
+  50% { transform:scale(1.4); color:rgba(255,255,255,0.8); }
+  100% { transform:scale(1); }
+}
+.inv-overlay-key-label { font-size:9px; color:rgba(255,255,255,0.15); letter-spacing:3px; text-transform:uppercase; margin-left:4px; }
+
+/* Inventory grid */
+.inv-overlay-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));
+  gap:6px; margin-bottom:20px;
+  min-height:120px;
+}
+
+.inv-overlay-cell {
+  aspect-ratio:3/4; background:#080808;
+  overflow:hidden; cursor:pointer;
+  position:relative; border:1px solid rgba(255,255,255,0.04);
+  transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  opacity:0; animation:cellFadeIn 0.4s ease forwards;
+}
+.inv-overlay-cell:nth-child(1) { animation-delay:0.02s; }
+.inv-overlay-cell:nth-child(2) { animation-delay:0.04s; }
+.inv-overlay-cell:nth-child(3) { animation-delay:0.06s; }
+.inv-overlay-cell:nth-child(4) { animation-delay:0.08s; }
+.inv-overlay-cell:nth-child(5) { animation-delay:0.10s; }
+.inv-overlay-cell:nth-child(6) { animation-delay:0.12s; }
+.inv-overlay-cell:nth-child(7) { animation-delay:0.14s; }
+.inv-overlay-cell:nth-child(8) { animation-delay:0.16s; }
+.inv-overlay-cell:nth-child(9) { animation-delay:0.18s; }
+.inv-overlay-cell:nth-child(10) { animation-delay:0.20s; }
+.inv-overlay-cell:nth-child(11) { animation-delay:0.22s; }
+.inv-overlay-cell:nth-child(12) { animation-delay:0.24s; }
+.inv-overlay-cell:nth-child(13) { animation-delay:0.26s; }
+.inv-overlay-cell:nth-child(14) { animation-delay:0.28s; }
+.inv-overlay-cell:nth-child(15) { animation-delay:0.30s; }
+.inv-overlay-cell:nth-child(16) { animation-delay:0.32s; }
+.inv-overlay-cell:nth-child(17) { animation-delay:0.34s; }
+.inv-overlay-cell:nth-child(18) { animation-delay:0.36s; }
+.inv-overlay-cell:nth-child(19) { animation-delay:0.38s; }
+.inv-overlay-cell:nth-child(20) { animation-delay:0.40s; }
+.inv-overlay-cell:nth-child(n+20) { animation-delay:0.42s; }
+
+@keyframes cellFadeIn {
+  0% { opacity:0; transform:translateY(12px) scale(0.95); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.inv-overlay-cell img {
+  width:100%; height:100%; object-fit:cover; display:block;
+  filter:grayscale(0.5); transition:all 0.4s ease;
+}
+.inv-overlay-cell .cell-label {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:6px 4px 4px;
+  background:linear-gradient(transparent, rgba(0,0,0,0.9) 30%);
+  font-size:7px; text-align:center; color:rgba(255,255,255,0.5);
+  line-height:1.15; letter-spacing:0.5px;
+  transition:all 0.3s;
+}
+.inv-overlay-cell .cell-rarity-bar {
+  position:absolute; top:0; left:0; right:0; height:2px;
+  transition:height 0.3s;
+}
+
+/* Rarity borders & glows */
+.inv-overlay-cell.rarity-common { border-color:rgba(255,255,255,0.04); }
+.inv-overlay-cell.rarity-common .cell-rarity-bar { background:rgba(255,255,255,0.08); }
+.inv-overlay-cell.rarity-common:hover { border-color:rgba(255,255,255,0.12); }
+
+.inv-overlay-cell.rarity-uncommon { border-color:rgba(139,195,74,0.1); }
+.inv-overlay-cell.rarity-uncommon .cell-rarity-bar { background:#8bc34a; }
+.inv-overlay-cell.rarity-uncommon:hover { border-color:#8bc34a; box-shadow:0 0 18px rgba(139,195,74,0.15); }
+
+.inv-overlay-cell.rarity-rare { border-color:rgba(100,181,246,0.1); }
+.inv-overlay-cell.rarity-rare .cell-rarity-bar { background:#64b5f6; }
+.inv-overlay-cell.rarity-rare:hover { border-color:#64b5f6; box-shadow:0 0 22px rgba(100,181,246,0.2); }
+
+.inv-overlay-cell.rarity-epic { border-color:rgba(206,147,216,0.1); }
+.inv-overlay-cell.rarity-epic .cell-rarity-bar { background:#ce93d8; }
+.inv-overlay-cell.rarity-epic:hover { border-color:#ce93d8; box-shadow:0 0 28px rgba(206,147,216,0.25); }
+
+.inv-overlay-cell.rarity-legendary { border-color:rgba(255,213,79,0.1); }
+.inv-overlay-cell.rarity-legendary .cell-rarity-bar { background:#ffd54f; }
+.inv-overlay-cell.rarity-legendary:hover { border-color:#ffd54f; box-shadow:0 0 40px rgba(255,213,79,0.3), 0 0 80px rgba(255,213,79,0.1); }
+
+.inv-overlay-cell:hover { transform:scale(1.06); z-index:10; }
+.inv-overlay-cell:hover img { filter:grayscale(0); }
+.inv-overlay-cell:hover .cell-label { color:rgba(255,255,255,0.9); }
+.inv-overlay-cell:hover .cell-rarity-bar { height:3px; }
+
+.inv-overlay-empty {
+  grid-column:1/-1;
+  color:rgba(255,255,255,0.06); font-size:11px; text-align:center;
+  padding:50px 0; letter-spacing:4px; text-transform:uppercase;
+}
+
+/* Bottom section */
+.inv-overlay-bottom {
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  padding-top:14px; border-top:1px solid rgba(255,255,255,0.04);
+}
+.inv-overlay-craft-toggle {
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:rgba(255,255,255,0.15); cursor:pointer;
+  padding:8px 20px; border:1px solid rgba(255,255,255,0.05);
+  transition:all 0.3s; background:transparent;
+}
+.inv-overlay-craft-toggle:hover {
+  border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.3);
+}
+.inv-overlay-craft-panel {
+  display:none; width:100%; max-width:400px;
+  padding:16px; border:1px solid rgba(255,255,255,0.04);
+  background:rgba(0,0,0,0.3); animation:craftSlide 0.3s ease;
+}
+.inv-overlay-craft-panel.open { display:block; }
+@keyframes craftSlide {
+  0% { opacity:0; transform:translateY(-8px); }
+  100% { opacity:1; transform:translateY(0); }
+}
+.inv-overlay-craft-label { font-size:9px; color:rgba(255,255,255,0.12); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; text-align:center; }
+.inv-overlay-craft-row { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; }
+.inv-overlay-craft-row .q-label { font-size:9px; color:rgba(255,255,255,0.12); letter-spacing:2px; text-transform:uppercase; }
+.inv-overlay-craft-row .q-bar { display:flex; gap:3px; }
+.inv-overlay-craft-row .q-dot { width:12px; height:12px; border-radius:50%; border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:all 0.3s; background:transparent; }
+.inv-overlay-craft-row .q-dot.active { background:rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.2); box-shadow:0 0 10px rgba(255,255,255,0.1); }
+.inv-overlay-craft-row .q-dot:hover { border-color:rgba(255,255,255,0.2); }
+.inv-overlay-craft-info { font-size:9px; color:rgba(255,255,255,0.1); text-align:center; letter-spacing:1px; margin-bottom:10px; }
+.inv-overlay-craft-btn {
+  background:transparent; border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.3); padding:8px 20px; font-size:9px;
+  letter-spacing:3px; text-transform:uppercase; cursor:pointer;
+  transition:all 0.3s; width:100%;
+}
+.inv-overlay-craft-btn:hover:not(:disabled) { border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); }
+.inv-overlay-craft-btn:disabled { opacity:0.2; cursor:default; }
+
+/* Navigation */
+.inv-overlay-nav {
+  display:flex; gap:10px; justify-content:center; margin-top:6px;
+}
+.inv-overlay-nav button {
+  background:transparent; border:1px solid rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.2); padding:8px 18px; font-size:10px;
+  letter-spacing:2px; cursor:pointer; transition:all 0.3s;
+}
+.inv-overlay-nav button:hover {
+  border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.5);
+}
+
+/* Particle burst for craft */
+.craft-burst {
+  position:fixed; pointer-events:none; z-index:10001;
+  width:2px; height:2px; border-radius:50%; opacity:0;
+  animation:burstFly 1s ease-out forwards;
+}
+@keyframes burstFly {
+  0% { opacity:1; }
+  100% { opacity:0; transform:translate(var(--bx), var(--by)) scale(0); }
+}
+
+/* ===== MEME EASTER EGG ===== */
+.meme-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  z-index:99999; display:none; overflow:hidden;
+}
+.meme-overlay.active { display:block; }
+
+.meme-overlay .meme-barn {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background:url('сарай.jpg') center/cover no-repeat;
+  filter:contrast(1.08) saturate(1.1);
+}
+.meme-overlay .meme-grain {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.04; pointer-events:none; mix-blend-mode:overlay;
+}
+
+.meme-prompt {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  z-index:20; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(10px);
+  transition:opacity 0.6s;
+}
+.meme-prompt.hidden { opacity:0; pointer-events:none; }
+
+.meme-prompt h2 {
+  font-family:'Unbounded',sans-serif;
+  font-size:36px; font-weight:700;
+  letter-spacing:12px; color:#fff;
+  margin-bottom:8px; text-shadow:0 0 30px rgba(255,255,255,0.1);
+}
+.meme-prompt .meme-hint {
+  font-size:11px; color:rgba(255,255,255,0.12);
+  letter-spacing:4px; text-transform:uppercase;
+  margin-bottom:30px;
+}
+.meme-prompt .meme-input-wrap {
+  display:flex; gap:10px; align-items:center;
+}
+.meme-prompt input {
+  background:transparent; border:1px solid rgba(255,255,255,0.1);
+  padding:12px 20px; font-size:18px; color:#fff;
+  font-family:'Inter',sans-serif;
+  letter-spacing:3px; text-transform:uppercase;
+  outline:none; width:200px; text-align:center;
+  transition:border-color 0.3s;
+}
+.meme-prompt input:focus { border-color:rgba(255,255,255,0.25); }
+.meme-prompt button {
+  background:transparent; border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.4); padding:12px 24px;
+  font-size:11px; letter-spacing:3px; text-transform:uppercase;
+  cursor:pointer; transition:all 0.3s;
+}
+.meme-prompt button:hover { border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); }
+.meme-prompt .meme-error {
+  font-size:11px; color:#ff4466; margin-top:12px;
+  opacity:0; transition:opacity 0.3s; letter-spacing:2px;
+}
+.meme-prompt .meme-error.show { opacity:1; }
+
+.meme-flash {
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  z-index:30; background:#fff; opacity:0; pointer-events:none;
+}
+.meme-flash.active { animation:memeFlash 0.8s ease-out forwards; }
+@keyframes memeFlash {
+  0% { opacity:1; }
+  100% { opacity:0; }
+}
+
+.meme-rooster {
+  position:absolute; z-index:2; pointer-events:none;
+  animation:memeRun var(--dur,3s) ease-in-out var(--delay,0s) infinite alternate;
+}
+.meme-rooster img {
+  width:100%; height:100%; object-fit:contain;
+  display:block;
+}
+.meme-rooster.spin img { animation:roosterSpin 0.6s linear infinite; }
+@keyframes roosterSpin { 100% { transform:rotate(360deg); } }
+.meme-rooster.bounce { animation-name:memeBounce; }
+@keyframes memeBounce {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(var(--by,-40px)); }
+}
+@keyframes memeRun {
+  0% { transform:translate(0,0) rotate(0deg); }
+  25% { transform:translate(var(--dx1,30px),var(--dy1,-20px)) rotate(var(--r1,5deg)); }
+  50% { transform:translate(var(--dx2,-20px),var(--dy2,30px)) rotate(var(--r2,-3deg)); }
+  75% { transform:translate(var(--dx3,40px),var(--dy3,-10px)) rotate(var(--r3,8deg)); }
+  100% { transform:translate(0,0) rotate(0deg); }
+}
 </style>
 </head>
 <body>
@@ -2597,8 +2917,9 @@ canvas#particles {
           <button class="admin-btn cyan" id="sellBtn" onclick="startSellAnimation()" disabled style="display:none;">◆ Продать фаурин</button>
         </div>
 
-        <div class="admin-section">
-          <button class="admin-btn cyan" id="carneusBtn" onclick="openCarneusPage()" style="width:100%;">🗝 Открытие Карнеусов</button>
+        <div class="admin-section" style="display:flex;gap:6px;">
+          <button class="admin-btn cyan" id="carneusBtn" onclick="openCarneusPage()" style="flex:1;">🗝 Карнеус</button>
+          <button class="admin-btn cyan" onclick="openInventoryPage()" style="flex:1;">🎒 Инвентарь</button>
         </div>
 
         <!-- ===== INVENTORY PANEL ===== -->
@@ -2759,6 +3080,41 @@ canvas#particles {
       <div class="carneus-result-piece" id="carneusResultContent"></div>
       <br>
       <button class="carneus-btn" onclick="closeCarneusPage()">✕ Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INVENTORY PAGE ===== -->
+<div class="inv-overlay" id="inventoryPage">
+  <div class="inv-overlay-container">
+    <div class="inv-overlay-title">И<span>Н</span>ВЕ<span>Н</span>ТАРЬ</div>
+    <div class="inv-overlay-divider"></div>
+    <div class="inv-overlay-subtitle">— Собрание артефактов —</div>
+
+    <div class="inv-overlay-key-area">
+      <span class="inv-overlay-key-icon" id="invOverlayKeyIcon">🗝</span>
+      <span class="inv-overlay-key-count" id="invOverlayKeys">0</span>
+      <span class="inv-overlay-key-label">ключей</span>
+    </div>
+
+    <div class="inv-overlay-grid" id="invOverlayGrid"></div>
+
+    <div class="inv-overlay-bottom">
+      <button class="inv-overlay-craft-toggle" id="invCraftToggle" onclick="toggleInvCraftPanel()">⚒ Создать ключ</button>
+      <div class="inv-overlay-craft-panel" id="invCraftPanel">
+        <div class="inv-overlay-craft-label">Качество ключа</div>
+        <div class="inv-overlay-craft-row">
+          <span class="q-label">Качество</span>
+          <div class="q-bar" id="invQualityBar"></div>
+        </div>
+        <div class="inv-overlay-craft-info" id="invCraftInfo">◆ 0 ◆ активированных · ◇ 5 ◇ неактивированных</div>
+        <button class="inv-overlay-craft-btn" id="invCraftKeyBtn" onclick="craftCarneusKeyFromInv()">⚒ Создать ключ</button>
+      </div>
+
+      <div class="inv-overlay-nav">
+        <button onclick="closeInventoryPage()">← Назад</button>
+        <button onclick="openCarneusPage(); closeInventoryPage();">🗝 Карнеус</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3646,6 +4002,7 @@ function updateMiningUI(data) {
   initCraftQuality();
   updateCraftQualityUI();
   renderUserInventory(user.inventory || []);
+  renderInventoryPage();
 }
 
 let miningCancelled = false;
@@ -4370,6 +4727,7 @@ async function craftCarneusKey() {
     if (data.success) {
       const labels = ['тусклый', 'слабый', 'обычный', 'чистый', 'сияющий', 'идеальный'];
       showToast('🔑 Ключ (' + labels[data.quality] + ') создан!', 'good');
+      spawnCraftBurst();
       fetchUsers();
     } else {
       showToast(data.error || 'Ошибка', 'bad');
@@ -4505,6 +4863,308 @@ enterDashboard = function() {
     setTimeout(() => updateMiningUI(), 500);
   }
 };
+
+// ===== INVENTORY PAGE =====
+let inventoryPageOpen = false;
+
+function openInventoryPage() {
+  inventoryPageOpen = true;
+  document.getElementById('inventoryPage').classList.add('active');
+  renderInventoryPage();
+}
+
+function closeInventoryPage() {
+  inventoryPageOpen = false;
+  document.getElementById('inventoryPage').classList.remove('active');
+}
+
+function renderInventoryPage() {
+  if (!inventoryPageOpen) return;
+  const user = usersData.find(u => u.name === currentUser);
+  if (!user) return;
+  const inv = user.inventory || [];
+  const keys = user.keys || 0;
+
+  const keyEl = document.getElementById('invOverlayKeys');
+  const old = parseInt(keyEl.textContent);
+  keyEl.textContent = keys;
+  if (old !== keys) {
+    keyEl.classList.remove('pop');
+    void keyEl.offsetWidth;
+    keyEl.classList.add('pop');
+  }
+  document.getElementById('invOverlayKeyIcon').classList.toggle('has-keys', keys > 0);
+
+  const grid = document.getElementById('invOverlayGrid');
+  grid.innerHTML = '';
+  if (inv.length === 0) {
+    grid.innerHTML = '<div class="inv-overlay-empty">ИНВЕНТАРЬ ПУСТ</div>';
+    return;
+  }
+  const itemsMap = getAllItemsMap();
+  inv.forEach(invItem => {
+    const item = itemsMap[invItem.id];
+    if (!item) return;
+    const cell = document.createElement('div');
+    cell.className = 'inv-overlay-cell rarity-' + item.rarity;
+    cell.title = item.name;
+    cell.innerHTML =
+      '<div class="cell-rarity-bar"></div>' +
+      '<img src="' + item.file + '" alt="' + item.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+      '<div class="cell-label">' + item.name + '</div>';
+    grid.appendChild(cell);
+  });
+}
+
+function toggleInvCraftPanel() {
+  const panel = document.getElementById('invCraftPanel');
+  panel.classList.toggle('open');
+  if (!invCraftInited) { initInvCraftQuality(); invCraftInited = true; }
+  updateInvCraftQualityUI();
+}
+
+let invCraftInited = false;
+
+function initInvCraftQuality() {
+  const bar = document.getElementById('invQualityBar');
+  bar.innerHTML = '';
+  for (let i = 0; i <= 5; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot' + (i === 5 ? ' active' : '');
+    dot.dataset.val = i;
+    dot.onclick = function() { craftQuality = i; updateInvCraftQualityUI(); };
+    bar.appendChild(dot);
+  }
+}
+
+function updateInvCraftQualityUI() {
+  const user = usersData.find(function(u) { return u.name === currentUser; });
+  if (!user) return;
+  const fa = user.faourines || { unactivated: 0, activated: 0 };
+  var dots = document.querySelectorAll('#invQualityBar .q-dot');
+  dots.forEach(function(d, i) {
+    d.classList.toggle('active', i <= craftQuality);
+  });
+  var act = Math.min(craftQuality, fa.activated);
+  var unact = 5 - act;
+  var canCraft = act <= fa.activated && unact <= fa.unactivated;
+  document.getElementById('invCraftInfo').textContent = '◆ ' + act + ' активированных \xB7 ◇ ' + unact + ' неактивированных';
+  document.getElementById('invCraftKeyBtn').disabled = !canCraft;
+}
+
+async function craftCarneusKeyFromInv() {
+  var act = Math.min(craftQuality, (usersData.find(function(u) { return u.name === currentUser; }) || {}).faourines?.activated || 0);
+  try {
+    const res = await fetch('/api/carneus/craft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser, activatedCount: act })
+    });
+    const data = await res.json();
+    if (data.success) {
+      var labels = ['тусклый', 'слабый', 'обычный', 'чистый', 'сияющий', 'идеальный'];
+      showToast('🔑 Ключ (' + labels[data.quality] + ') создан!', 'good');
+      spawnCraftBurst();
+      fetchUsers();
+    } else {
+      showToast(data.error || 'Ошибка', 'bad');
+    }
+  } catch (e) {
+    showToast('Ошибка соединения', 'bad');
+  }
+}
+
+function spawnCraftBurst() {
+  for (var i = 0; i < 30; i++) {
+    (function() {
+      var p = document.createElement('div');
+      p.className = 'craft-burst';
+      var colors = ['#ffffff', '#ffd700', '#00e5ff', '#ff0088', '#8833ff'];
+      var color = colors[Math.floor(Math.random() * colors.length)];
+      var size = 2 + Math.random() * 4;
+      var angle = Math.random() * 360;
+      var dist = 60 + Math.random() * 120;
+      var delay = Math.random() * 0.3;
+      p.style.cssText = 'left:50%;top:50%;width:' + size + 'px;height:' + size + 'px;background:' + color + ';box-shadow:0 0 4px ' + color + ';--bx:' + Math.cos(angle) * dist + 'px;--by:' + Math.sin(angle) * dist + 'px;animation-delay:' + delay + 's';
+      document.body.appendChild(p);
+      setTimeout(function() { p.remove(); }, 1500);
+    })();
+  }
+}
+
+// ===== MEME EASTER EGG =====
+var fPressCount = 0;
+var fPressTimer = null;
+var memeActive = false;
+var memeMusicWasPlaying = false;
+
+// Triple-F detection
+document.addEventListener('keydown', function(e) {
+  if (memeActive) return;
+  if (e.key === 'f' || e.key === 'F') {
+    fPressCount++;
+    if (fPressTimer) clearTimeout(fPressTimer);
+    fPressTimer = setTimeout(function() { fPressCount = 0; }, 1500);
+    if (fPressCount >= 3) {
+      fPressCount = 0;
+      if (fPressTimer) { clearTimeout(fPressTimer); fPressTimer = null; }
+      triggerMeme();
+    }
+  }
+});
+
+function triggerMeme() {
+  memeActive = true;
+
+  // Pause music
+  if (audio && isPlaying) {
+    memeMusicWasPlaying = true;
+    audio.pause();
+    document.getElementById('playBtn').textContent = '\u25B6';
+    isPlaying = false;
+  } else {
+    memeMusicWasPlaying = false;
+  }
+
+  // Hide UI elements that might overlap
+  document.getElementById('musicPlayer').style.display = 'none';
+  document.getElementById('secretZone').style.display = 'none';
+
+  // Show prompt
+  document.getElementById('memeOverlay').classList.add('active');
+  document.getElementById('memePrompt').classList.remove('hidden');
+
+  var input = document.getElementById('memeWordInput');
+  input.value = '';
+  input.focus();
+  document.getElementById('memeError').classList.remove('show');
+}
+
+function checkMemeWord() {
+  var word = document.getElementById('memeWordInput').value.trim().toLowerCase();
+  if (word === 'село') {
+    document.getElementById('memeError').classList.remove('show');
+    startMemeAnimation();
+  } else {
+    document.getElementById('memeError').classList.add('show');
+    document.getElementById('memeWordInput').value = '';
+    document.getElementById('memeWordInput').focus();
+  }
+}
+
+// Enter key for meme input
+document.getElementById('memeWordInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { checkMemeWord(); }
+});
+
+function startMemeAnimation() {
+  // Hide prompt
+  document.getElementById('memePrompt').classList.add('hidden');
+
+  // Flash
+  var flash = document.getElementById('memeFlash');
+  flash.classList.remove('active');
+  void flash.offsetWidth;
+  flash.classList.add('active');
+
+  // Show barn and spawn roosters after brief flash
+  setTimeout(function() {
+    spawnMemeRoosters();
+  }, 400);
+
+  // Auto-close after 7 seconds
+  setTimeout(function() {
+    closeMemeOverlay();
+  }, 7000);
+}
+
+function spawnMemeRoosters() {
+  var container = document.getElementById('memeRoosters');
+  container.innerHTML = '';
+  var count = 20 + Math.floor(Math.random() * 10);
+
+  for (var i = 0; i < count; i++) {
+    (function() {
+      var el = document.createElement('div');
+      el.className = 'meme-rooster';
+
+      // Random properties
+      var size = 40 + Math.random() * 90;
+      var x = Math.random() * 85 + 5;
+      var y = Math.random() * 85 + 5;
+
+      // Movement vectors
+      var dx1 = (Math.random() - 0.5) * 150;
+      var dy1 = (Math.random() - 0.5) * 150;
+      var dx2 = (Math.random() - 0.5) * 150;
+      var dy2 = (Math.random() - 0.5) * 150;
+      var dx3 = (Math.random() - 0.5) * 150;
+      var dy3 = (Math.random() - 0.5) * 150;
+
+      var r1 = (Math.random() - 0.5) * 30;
+      var r2 = (Math.random() - 0.5) * 30;
+      var r3 = (Math.random() - 0.5) * 30;
+
+      var dur = 2 + Math.random() * 4;
+      var delay = Math.random() * 2;
+
+      el.style.cssText =
+        'width:' + size + 'px;height:' + size + 'px;' +
+        'left:' + x + '%;top:' + y + '%;' +
+        '--dx1:' + dx1 + 'px;--dy1:' + dy1 + 'px;' +
+        '--dx2:' + dx2 + 'px;--dy2:' + dy2 + 'px;' +
+        '--dx3:' + dx3 + 'px;--dy3:' + dy3 + 'px;' +
+        '--r1:' + r1 + 'deg;--r2:' + r2 + 'deg;--r3:' + r3 + 'deg;' +
+        '--dur:' + dur + 's;--delay:' + delay + 's;';
+
+      // Random modifiers: some spin, some bounce
+      if (Math.random() < 0.2) el.classList.add('spin');
+      if (Math.random() < 0.15) el.classList.add('bounce');
+      if (Math.random() < 0.1) el.style.transform = 'scaleX(-1)';
+
+      el.innerHTML = '<img src="петух.png" alt="петух">';
+      container.appendChild(el);
+    })();
+  }
+}
+
+function closeMemeOverlay() {
+  memeActive = false;
+  document.getElementById('memeOverlay').classList.remove('active');
+  document.getElementById('memeRoosters').innerHTML = '';
+  document.getElementById('memePrompt').classList.remove('hidden');
+  document.getElementById('memeFlash').classList.remove('active');
+
+  // Restore UI
+  document.getElementById('musicPlayer').style.display = '';
+  document.getElementById('secretZone').style.display = '';
+
+  // Resume music
+  if (memeMusicWasPlaying && audio) {
+    audio.play().then(function() {
+      isPlaying = true;
+      document.getElementById('playBtn').textContent = '\u23F8';
+    }).catch(function() {});
+  }
+}
 </script>
+
+<!-- ===== MEME EASTER EGG ===== -->
+<div class="meme-overlay" id="memeOverlay">
+  <div class="meme-barn" id="memeBarn"></div>
+  <div class="meme-grain"></div>
+  <div class="meme-roosters" id="memeRoosters"></div>
+  <div class="meme-flash" id="memeFlash"></div>
+
+  <div class="meme-prompt" id="memePrompt">
+    <h2>ВВЕДИТЕ СЛОВО</h2>
+    <div class="meme-hint">— Трижды F призывают древнее —</div>
+    <div class="meme-input-wrap">
+      <input type="text" id="memeWordInput" maxlength="10" autocomplete="off" placeholder="...">
+      <button id="memeSubmitBtn" onclick="checkMemeWord()">→</button>
+    </div>
+    <div class="meme-error" id="memeError">Неверное слово</div>
+  </div>
+</div>
 </body>
 </html>

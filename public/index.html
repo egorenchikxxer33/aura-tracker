@@ -4998,16 +4998,37 @@ var fPressTimer = null;
 var memeActive = false;
 var memeMusicWasPlaying = false;
 
-// Triple-F detection
+// Visual F-press indicator
+var fIndicator = document.createElement('div');
+fIndicator.id = 'fIndicator';
+fIndicator.style.cssText = 'position:fixed;bottom:30px;right:30px;z-index:99998;font-family:Unbounded,sans-serif;font-size:13px;letter-spacing:3px;color:rgba(255,255,255,0.08);transition:all 0.3s;display:none;';
+fIndicator.textContent = 'F 0/3';
+document.body.appendChild(fIndicator);
+
+function updateFIndicator() {
+  if (fPressCount > 0) {
+    fIndicator.style.display = 'block';
+    fIndicator.textContent = 'F ' + fPressCount + '/3';
+    fIndicator.style.color = fPressCount === 2 ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)';
+    fIndicator.style.transform = 'scale(' + (1 + fPressCount * 0.1) + ')';
+  } else {
+    fIndicator.style.display = 'none';
+    fIndicator.style.transform = 'scale(1)';
+  }
+}
+
+// Triple-F detection (supports Russian layout too — 'а' is F on ЙЦУКЕН)
 document.addEventListener('keydown', function(e) {
   if (memeActive) return;
-  if (e.key === 'f' || e.key === 'F') {
+  if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
     fPressCount++;
+    updateFIndicator();
     if (fPressTimer) clearTimeout(fPressTimer);
-    fPressTimer = setTimeout(function() { fPressCount = 0; }, 1500);
+    fPressTimer = setTimeout(function() { fPressCount = 0; updateFIndicator(); }, 1500);
     if (fPressCount >= 3) {
       fPressCount = 0;
       if (fPressTimer) { clearTimeout(fPressTimer); fPressTimer = null; }
+      fIndicator.style.display = 'none';
       triggerMeme();
     }
   }

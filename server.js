@@ -11,6 +11,7 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 let maintenanceMode = false;
 let globalAnimation = null; // { name, id }
 let animIdCounter = 0;
+let globalNotification = null; // { message, id }
 
 const USER_NAMES = [
   'Егор Рейдик', 'Назар', 'Лука',
@@ -125,7 +126,7 @@ app.get('/api/users', (req, res) => {
   const sorted = Object.entries(data.users)
     .map(([name, info]) => ({ name, ...info }))
     .sort((a, b) => b.aura - a.aura);
-  res.json({ users: sorted, maintenance: maintenanceMode, globalAnimation });
+  res.json({ users: sorted, maintenance: maintenanceMode, globalAnimation, globalNotification });
 });
 
 app.post('/api/login', (req, res) => {
@@ -446,6 +447,18 @@ app.post('/api/background/clear', (req, res) => {
   if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
   globalAnimation = null;
   res.json({ success: true });
+});
+
+app.post('/api/notification/send', (req, res) => {
+  const { password, message } = req.body;
+  if (password !== ADMIN_PASSWORD) return res.status(403).json({ error: 'Только оператор' });
+  if (!message || typeof message !== 'string' || message.trim().length === 0) {
+    return res.status(400).json({ error: 'Введите сообщение' });
+  }
+  const id = ++animIdCounter;
+  globalNotification = { message: message.trim(), id };
+  setTimeout(() => { if (globalNotification && globalNotification.id === id) globalNotification = null; }, 30000);
+  res.json({ success: true, message: globalNotification.message });
 });
 
 app.listen(PORT, '0.0.0.0', () => {

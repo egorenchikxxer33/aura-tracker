@@ -5123,6 +5123,10 @@ function triggerMeme() {
   input.value = '';
   input.focus();
   document.getElementById('memeError').classList.remove('show');
+  // Handle Enter on the meme input
+  input.onkeydown = function(e) {
+    if (e.key === 'Enter') { checkMemeWord(); }
+  };
 }
 
 function checkMemeWord() {
@@ -5136,11 +5140,6 @@ function checkMemeWord() {
     document.getElementById('memeWordInput').focus();
   }
 }
-
-// Enter key for meme input
-document.getElementById('memeWordInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { checkMemeWord(); }
-});
 
 function startMemeAnimation() {
   // Hide prompt

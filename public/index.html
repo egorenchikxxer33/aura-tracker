@@ -5234,7 +5234,7 @@ function closeMemeOverlay() {
 }
 
 // ===== NOTIFICATION SYSTEM =====
-var notifAccepted = localStorage.getItem('notifAccepted') === 'true';
+try { var notifAccepted = localStorage.getItem('notifAccepted') === 'true'; } catch(e) { var notifAccepted = false; }
 
 function requestNotifPermission() {
   var btn = document.getElementById('notifAcceptBtn');
@@ -5247,19 +5247,19 @@ function requestNotifPermission() {
   }
   Notification.requestPermission().then(function(perm) {
     if (perm === 'granted') {
+      try { localStorage.setItem('notifAccepted', 'true'); } catch(e) {}
       notifAccepted = true;
-      localStorage.setItem('notifAccepted', 'true');
       document.getElementById('notifOverlay').classList.remove('active');
-      // Send welcome notification
       showNotif('Aura Tracker', 'Добро пожаловать! Уведомления включены.');
-      // Start 30-min reminders
       startNotifReminders();
     } else {
+      document.getElementById('notifOverlay').classList.add('active');
       document.getElementById('notifError').style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Разрешить уведомления';
     }
   }).catch(function() {
+    document.getElementById('notifOverlay').classList.add('active');
     document.getElementById('notifError').style.display = 'block';
     btn.disabled = false;
     btn.textContent = 'Разрешить уведомления';
@@ -5287,29 +5287,21 @@ function startNotifReminders() {
 
 // Check notification permission on page load
 (function initNotifCheck() {
-  if (!('Notification' in window)) {
-    // Notifications not supported — show error immediately
-    document.getElementById('notifOverlay').classList.add('active');
-    document.getElementById('notifError').style.display = 'block';
-    document.getElementById('notifAcceptBtn').disabled = true;
-    return;
-  }
-  if (notifAccepted) {
-    if (Notification.permission === 'granted') {
-      // Already set up, good to go
-      startNotifReminders();
-      return;
-    }
-    if (Notification.permission === 'denied') {
-      // Was accepted before but now denied — show overlay
+  try {
+    if (!('Notification' in window)) {
       document.getElementById('notifOverlay').classList.add('active');
       document.getElementById('notifError').style.display = 'block';
       document.getElementById('notifAcceptBtn').disabled = true;
       return;
     }
+    if (Notification.permission === 'granted') {
+      startNotifReminders();
+      return;
+    }
+    document.getElementById('notifOverlay').classList.add('active');
+  } catch(e) {
+    document.getElementById('notifOverlay').classList.add('active');
   }
-  // Default state — show overlay
-  document.getElementById('notifOverlay').classList.add('active');
 })();
 
 // Check for global notifications from operator
